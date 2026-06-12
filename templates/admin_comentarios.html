@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Comentários - Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; }
+        h1, h2 { color: #667eea; }
+        .comentario { background: #f8f9fa; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #667eea; }
+        .comentario-nome { font-weight: bold; color: #667eea; }
+        .comentario-data { font-size: 12px; color: #999; margin: 5px 0; }
+        .btn { display: inline-block; padding: 5px 10px; background: #667eea; color: white; text-decoration: none; border-radius: 3px; margin-right: 5px; font-size: 12px; }
+        .btn-success { background: #27ae60; }
+        .btn-danger { background: #e74c3c; }
+        .btn-voltar { display: inline-block; margin-bottom: 20px; padding: 8px 16px; background: #666; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin" class="btn-voltar">← Voltar ao Painel</a>
+        <h1>💬 Gerenciar Comentários</h1>
+
+        <h2>⏳ Comentários Pendentes ({{ pendentes|length }})</h2>
+        {% for comentario in pendentes %}
+        <div class="comentario">
+            <div class="comentario-nome">{{ comentario.nome }}</div>
+            <div class="comentario-data">{{ comentario.data.strftime('%d/%m/%Y às %H:%M') }} - Notícia: {{ comentario.noticia.titulo }}</div>
+            <div class="comentario-conteudo">{{ comentario.conteudo }}</div>
+            <div style="margin-top: 10px;">
+                <a href="/admin/comentario/aprovar/{{ comentario.id }}" class="btn btn-success">✓ Aprovar</a>
+                <a href="/admin/comentario/excluir/{{ comentario.id }}" class="btn btn-danger" onclick="return confirm('Tem certeza?')">✗ Excluir</a>
+            </div>
+        </div>
+        {% else %}
+        <p>Nenhum comentário pendente.</p>
+        {% endfor %}
+
+        <h2>✅ Comentários Aprovados</h2>
+        {% for comentario in aprovados %}
+        <div class="comentario">
+            <div class="comentario-nome">{{ comentario.nome }}</div>
+            <div class="comentario-data">{{ comentario.data.strftime('%d/%m/%Y às %H:%M') }} - Notícia: {{ comentario.noticia.titulo }}</div>
+            <div class="comentario-conteudo">{{ comentario.conteudo }}</div>
+            <div style="margin-top: 10px;">
+                <a href="/admin/comentario/excluir/{{ comentario.id }}" class="btn btn-danger" onclick="return confirm('Tem certeza?')">🗑️ Excluir</a>
+            </div>
+        </div>
+        {% else %}
+        <p>Nenhum comentário aprovado ainda.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

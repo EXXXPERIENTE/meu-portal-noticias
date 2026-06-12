@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ noticia.titulo }} - Portal Tech+Saúde</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            background: #fafafa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .imagem-destaque {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .conteudo {
+            font-size: 18px;
+            margin: 30px 0;
+        }
+
+        .conteudo img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .conteudo h2, .conteudo h3 {
+            margin: 20px 0 10px;
+            color: #667eea;
+        }
+
+        .like-section {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            font-size: 48px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .like-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .like-count {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .comentarios {
+            margin: 40px 0;
+        }
+
+        .comentario {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comentario-nome {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .comentario-data {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .comentario-conteudo {
+            color: #555;
+        }
+
+        .form-comentario {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .form-comentario h3 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: #666;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn-voltar:hover {
+            background: #555;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <a href="/">← Voltar para o início</a>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h1>{{ noticia.titulo }}</h1>
+        <div class="meta">
+    📅 {{ noticia.data_publicacao.strftime('%d/%m/%Y às %H:%M') }} |
+    🏷️ Categoria:
+    {% if noticia.categoria == 'tecnologia' %}
+        🚀 Tecnologia
+    {% elif noticia.categoria == 'saude' %}
+        🏥 Saúde
+    {% else %}
+        🤔 Curiosidades
+    {% endif %} |
+    👁️ {{ noticia.visualizacoes }} visualizações
+</div>
+
+        {% if noticia.imagem %}
+<img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="imagem-destaque">
+{% else %}
+<div style="background: linear-gradient(135deg, {% if noticia.categoria == 'tecnologia' %}#667eea, #764ba2{% elif noticia.categoria == 'saude' %}#27ae60, #2ecc71{% else %}#e74c3c, #f39c12{% endif %}); height: 200px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
+    {% if noticia.categoria == 'tecnologia' %}💻🚀
+    {% elif noticia.categoria == 'saude' %}🏥💊
+    {% else %}🤔💡{% endif %}
+</div>
+{% endif %}
+        
+
+        <div class="conteudo">
+            {{ noticia.conteudo|safe }}
+        </div>
+
+        <!-- Seção de Likes -->
+        <div class="like-section">
+            <button class="like-btn" id="likeBtn" data-noticia-id="{{ noticia.id }}">
+                {% if ja_curtiu %}❤️{% else %}🤍{% endif %}
+            </button>
+            <div class="like-count">
+                <span id="likeCount">{{ total_likes }}</span> pessoas curtiram esta notícia
+            </div>
+        </div>
+
+        <!-- Seção de Comentários -->
+        <div class="comentarios">
+            <h2>💬 Comentários ({{ comentarios|length }})</h2>
+
+            {% for comentario in comentarios %}
+            <div class="comentario">
+                <div class="comentario-nome">{{ comentario.nome }}</div>
+                <div class="comentario-data">{{ comentario.data.strftime('%d/%m/%Y às %H:%M') }}</div>
+                <div class="comentario-conteudo">{{ comentario.conteudo }}</div>
+            </div>
+            {% else %}
+            <p style="color: #888; text-align: center;">Seja o primeiro a comentar! 💬</p>
+            {% endfor %}
+
+            <!-- Formulário de Comentário -->
+            <div class="form-comentario">
+                <h3>Deixe seu comentário</h3>
+                <form method="POST" action="/comentar/{{ noticia.id }}">
+                    <div class="form-group">
+                        <label>Nome *</label>
+                        <input type="text" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email (opcional, não será publicado)</label>
+                        <input type="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Comentário *</label>
+                        <textarea name="conteudo" required></textarea>
+                    </div>
+                    <button type="submit">Enviar Comentário</button>
+                    <p style="font-size: 12px; color: #888; margin-top: 10px;">
+                        * Comentários passam por moderação antes de serem publicados.
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <a href="/" class="btn-voltar">← Voltar para o início</a>
+    </div>
+
+    <script>
+        // Sistema de Likes via AJAX
+        const likeBtn = document.getElementById('likeBtn');
+        if (likeBtn) {
+            likeBtn.addEventListener('click', async function() {
+                const noticiaId = this.dataset.noticiaId;
+
+                const response = await fetch(`/like/${noticiaId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+                const result = await response.json();
+
+                if (result.liked) {
+                    likeBtn.innerHTML = '❤️';
+                } else {
+                    likeBtn.innerHTML = '🤍';
+                }
+
+                document.getElementById('likeCount').innerText = result.total;
+            });
+        }
+    </script>
+</body>
+</html>

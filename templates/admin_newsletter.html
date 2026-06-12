@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter - Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; }
+        h1, h2 { color: #667eea; }
+        .btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 5px; }
+        .btn-success { background: #27ae60; }
+        .btn-voltar { background: #666; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        textarea { min-height: 200px; }
+        .alert { padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .alert-info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin" class="btn btn-voltar">← Voltar ao Painel</a>
+        <h1>📧 Newsletter</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div>
+                <h2>✉️ Enviar Newsletter</h2>
+                <form method="POST" action="/admin/newsletter/enviar">
+                    <div class="form-group">
+                        <label>Assunto:</label>
+                        <input type="text" name="assunto" required placeholder="Ex: Novidades da semana">
+                    </div>
+                    <div class="form-group">
+                        <label>Mensagem (HTML permitido):</label>
+                        <textarea name="mensagem" required placeholder="Digite sua mensagem..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Enviar para {{ inscritos|length }} inscritos</button>
+                </form>
+                <div class="alert alert-info" style="margin-top: 15px;">
+                    💡 Dica: Integre com SendGrid ou Mailgun para envio real de emails. O sistema está pronto para a integração!
+                </div>
+            </div>
+
+            <div>
+                <h2>📋 Inscritos ({{ inscritos|length }})</h2>
+                <table>
+                    <thead>
+                        <tr><th>Email</th><th>Data de Inscrição</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for inscrito in inscritos %}
+                        <tr>
+                            <td>{{ inscrito.email }}</td>
+                            <td>{{ inscrito.data_inscricao.strftime('%d/%m/%Y') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="2">Nenhum inscrito ainda.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    📊 Total de inscritos ativos: {{ inscritos|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

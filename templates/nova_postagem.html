@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Postagem - Admin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 300px;
+            font-family: monospace;
+        }
+        input[type="file"] {
+            padding: 10px;
+            border: 1px dashed #ddd;
+            background: #f8f9fa;
+            width: 100%;
+        }
+        button {
+            background: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #229954;
+        }
+        .btn-voltar {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .btn-voltar:hover {
+            background: #5a67d8;
+        }
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .dica {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            border-left: 4px solid #2196F3;
+        }
+        .dica code {
+            background: #fff;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .preview {
+            max-width: 200px;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✍️ Nova Postagem</h1>
+        <a href="/admin" class="btn-voltar">← Voltar ao Painel</a>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>📌 Título da Notícia:</label>
+            <input type="text" name="titulo" required placeholder="Ex: Nova IA revoluciona diagnóstico médico">
+            <label>🏷️ Categoria:</label>
+<select name="categoria" required>
+    <option value="tecnologia">🚀 Tecnologia</option>
+    <option value="saude">🏥 Saúde & Bem-estar</option>
+    <option value="curiosidades">🤔 Curiosidades</option>
+</select>
+
+            <label>🖼️ Imagem Destacada (opcional):</label>
+            <input type="file" name="imagem" accept="image/*" id="imagemInput">
+            <img id="preview" class="preview" alt="Prévia da imagem">
+
+            <label>📝 Conteúdo (HTML):</label>
+            <textarea id="conteudo" name="conteudo" rows="12" placeholder="Digite sua notícia aqui...
+
+Você pode usar HTML básico como:
+<h2>Subtítulo</h2>
+<p>Seu parágrafo aqui...</p>
+<ul><li>Item 1</li><li>Item 2</li></ul>
+<strong>Negrito</strong> e <em>itálico</em>"></textarea>
+
+            <button type="submit">📢 Publicar Notícia</button>
+        </form>
+
+        <div class="dica">
+            <strong>💡 Dicas de formatação (HTML básico):</strong><br>
+            • <code>&lt;h2&gt;Título secundário&lt;/h2&gt;</code> - Para subtítulos<br>
+            • <code>&lt;p&gt;Parágrafo&lt;/p&gt;</code> - Para texto normal<br>
+            • <code>&lt;strong&gt;negrito&lt;/strong&gt;</code> ou <code>&lt;b&gt;negrito&lt;/b&gt;</code><br>
+            • <code>&lt;em&gt;itálico&lt;/em&gt;</code> ou <code>&lt;i&gt;itálico&lt;/i&gt;</code><br>
+            • <code>&lt;ul&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/ul&gt;</code> - Lista com marcadores<br>
+            • <code>&lt;img src="URL_da_imagem" alt="descrição"&gt;</code> - Para adicionar imagens<br>
+            • <code>&lt;a href="URL"&gt;Clique aqui&lt;/a&gt;</code> - Links
+        </div>
+    </div>
+
+    <script>
+        // Preview de imagem
+        document.getElementById('imagemInput')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('preview');
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
