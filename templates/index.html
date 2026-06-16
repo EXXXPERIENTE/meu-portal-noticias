@@ -170,15 +170,54 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* ============================================ */
+        /* IMAGEM OCUPA TODO O ESPAÇO DO CARD */
+        /* ============================================ */
+        .card-imagem-wrapper {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            background: #e9ecef;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* ============================================ */
+        /* CORREÇÃO: IMAGEM CLICÁVEL */
+        /* ============================================ */
+        .card-imagem-link {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+        }
+
         .card-imagem {
             width: 100%;
-            height: 140px;
+            height: 100%;
             object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-imagem {
+            transform: scale(1.03);
+        }
+
+        /* Fallback para quando não tem imagem */
+        .card-imagem-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
         }
 
         .card-badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 15px;
             font-size: 10px;
             font-weight: bold;
@@ -204,13 +243,15 @@
         }
 
         .card-content {
-            padding: 10px;
+            padding: 12px 14px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .card-content h3 {
             font-size: 14px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             line-height: 1.4;
             min-height: 38px;
         }
@@ -218,6 +259,7 @@
         .card-content h3 a {
             color: #333;
             text-decoration: none;
+            transition: color 0.2s;
         }
 
         .card-content h3 a:hover {
@@ -236,6 +278,7 @@
             margin-bottom: 8px;
             font-size: 11px;
             min-height: 46px;
+            flex: 1;
         }
 
         .read-more {
@@ -244,6 +287,7 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 11px;
+            margin-top: auto;
         }
 
         .read-more:hover {
@@ -365,11 +409,12 @@
             display: flex;
             gap: 15px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .social-links a {
             background: rgba(255,255,255,0.1);
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 5px;
             font-size: 12px;
         }
@@ -449,11 +494,18 @@
                     {% for noticia in tech_noticias %}
                     <div class="card">
                         <div class="card-decoration tech"></div>
-                        {% if noticia.imagem %}
-                        <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="card-imagem">
-                        {% else %}
-                        <div class="card-imagem" style="background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">💻</div>
-                        {% endif %}
+                        <!-- ============================================ -->
+                        <!-- IMAGEM CLICÁVEL - Link direto na imagem -->
+                        <!-- ============================================ -->
+                        <a href="/noticia/{{ noticia.id }}" class="card-imagem-link">
+                            <div class="card-imagem-wrapper">
+                                {% if noticia.imagem %}
+                                <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="card-imagem" loading="lazy">
+                                {% else %}
+                                <div class="card-imagem-fallback" style="background: linear-gradient(135deg, #667eea, #764ba2);">💻</div>
+                                {% endif %}
+                            </div>
+                        </a>
                         <div class="card-content">
                             <span class="card-badge badge-tech">🚀 Tecnologia</span>
                             <h3><a href="/noticia/{{ noticia.id }}">{{ noticia.titulo|truncate(55) }}</a></h3>
@@ -479,11 +531,18 @@
                     {% for noticia in saude_noticias %}
                     <div class="card">
                         <div class="card-decoration saude"></div>
-                        {% if noticia.imagem %}
-                        <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="card-imagem">
-                        {% else %}
-                        <div class="card-imagem" style="background: linear-gradient(135deg, #27ae60, #2ecc71); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">🏥</div>
-                        {% endif %}
+                        <!-- ============================================ -->
+                        <!-- IMAGEM CLICÁVEL -->
+                        <!-- ============================================ -->
+                        <a href="/noticia/{{ noticia.id }}" class="card-imagem-link">
+                            <div class="card-imagem-wrapper">
+                                {% if noticia.imagem %}
+                                <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="card-imagem" loading="lazy">
+                                {% else %}
+                                <div class="card-imagem-fallback" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">🏥</div>
+                                {% endif %}
+                            </div>
+                        </a>
                         <div class="card-content">
                             <span class="card-badge badge-saude">🏥 Saúde</span>
                             <h3><a href="/noticia/{{ noticia.id }}">{{ noticia.titulo|truncate(55) }}</a></h3>
@@ -509,11 +568,18 @@
                     {% for noticia in curiosidades_noticias %}
                     <div class="card">
                         <div class="card-decoration curiosidades"></div>
-                        {% if noticia.imagem %}
-                        <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="card-imagem">
-                        {% else %}
-                        <div class="card-imagem" style="background: linear-gradient(135deg, #e74c3c, #f39c12); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">🤔</div>
-                        {% endif %}
+                        <!-- ============================================ -->
+                        <!-- IMAGEM CLICÁVEL -->
+                        <!-- ============================================ -->
+                        <a href="/noticia/{{ noticia.id }}" class="card-imagem-link">
+                            <div class="card-imagem-wrapper">
+                                {% if noticia.imagem %}
+                                <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="card-imagem" loading="lazy">
+                                {% else %}
+                                <div class="card-imagem-fallback" style="background: linear-gradient(135deg, #e74c3c, #f39c12);">🤔</div>
+                                {% endif %}
+                            </div>
+                        </a>
                         <div class="card-content">
                             <span class="card-badge badge-curiosidades">🤔 Curiosidade</span>
                             <h3><a href="/noticia/{{ noticia.id }}">{{ noticia.titulo|truncate(55) }}</a></h3>
@@ -549,7 +615,6 @@
                     <h3>🚀 J.CB. INFORMATICA</h3>
                     <p>Especialistas em soluções tecnológicas e conteúdo de qualidade</p>
                     <div class="social-links">
-                        <!-- WHATSAPP COM MENSAGEM AUTOMÁTICA - CORRIGIDO -->
                         <a href="https://api.whatsapp.com/send?phone=5541991473076&text=Olá!%20Gostaria%20de%20mais%20informações%20sobre%20os%20serviços%20da%20J.CB.%20INFORMATICA" target="_blank">📱 WhatsApp</a>
                         <a href="mailto:exxxperiente@gmail.com">📧 Email</a>
                     </div>
@@ -609,19 +674,61 @@
                     const techGrid = document.querySelector('#tecnologia .grid-noticias');
                     if (techGrid && data.tecnologia) {
                         techGrid.innerHTML = data.tecnologia.length ? data.tecnologia.map(n => `
-                            <div class="card"><div class="card-decoration tech"></div>${n.imagem ? `<img src="${n.imagem}" class="card-imagem">` : '<div class="card-imagem" style="background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">💻</div>'}<div class="card-content"><span class="card-badge badge-tech">🚀 Tecnologia</span><h3><a href="/noticia/${n.id}">${n.titulo.substring(0,55)}</a></h3><div class="meta">📅 ${n.data}</div><div class="resumo">${n.resumo.substring(0,85)}</div><a href="/noticia/${n.id}" class="read-more">Ler mais →</a></div></div>
+                            <div class="card">
+                                <div class="card-decoration tech"></div>
+                                <a href="/noticia/${n.id}" class="card-imagem-link">
+                                    <div class="card-imagem-wrapper">
+                                        ${n.imagem ? `<img src="${n.imagem}" class="card-imagem" loading="lazy">` : `<div class="card-imagem-fallback" style="background: linear-gradient(135deg, #667eea, #764ba2);">💻</div>`}
+                                    </div>
+                                </a>
+                                <div class="card-content">
+                                    <span class="card-badge badge-tech">🚀 Tecnologia</span>
+                                    <h3><a href="/noticia/${n.id}">${n.titulo.substring(0,55)}</a></h3>
+                                    <div class="meta">📅 ${n.data}</div>
+                                    <div class="resumo">${n.resumo.substring(0,85)}</div>
+                                    <a href="/noticia/${n.id}" class="read-more">Ler mais →</a>
+                                </div>
+                            </div>
                         `).join('') : '<p style="color: #888; grid-column: 1/-1; text-align: center; padding: 40px;">Nenhuma notícia de tecnologia.</p>';
                     }
                     const saudeGrid = document.querySelector('#saude .grid-noticias');
                     if (saudeGrid && data.saude) {
                         saudeGrid.innerHTML = data.saude.length ? data.saude.map(n => `
-                            <div class="card"><div class="card-decoration saude"></div>${n.imagem ? `<img src="${n.imagem}" class="card-imagem">` : '<div class="card-imagem" style="background: linear-gradient(135deg, #27ae60, #2ecc71); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">🏥</div>'}<div class="card-content"><span class="card-badge badge-saude">🏥 Saúde</span><h3><a href="/noticia/${n.id}">${n.titulo.substring(0,55)}</a></h3><div class="meta">📅 ${n.data}</div><div class="resumo">${n.resumo.substring(0,85)}</div><a href="/noticia/${n.id}" class="read-more">Ler mais →</a></div></div>
+                            <div class="card">
+                                <div class="card-decoration saude"></div>
+                                <a href="/noticia/${n.id}" class="card-imagem-link">
+                                    <div class="card-imagem-wrapper">
+                                        ${n.imagem ? `<img src="${n.imagem}" class="card-imagem" loading="lazy">` : `<div class="card-imagem-fallback" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">🏥</div>`}
+                                    </div>
+                                </a>
+                                <div class="card-content">
+                                    <span class="card-badge badge-saude">🏥 Saúde</span>
+                                    <h3><a href="/noticia/${n.id}">${n.titulo.substring(0,55)}</a></h3>
+                                    <div class="meta">📅 ${n.data}</div>
+                                    <div class="resumo">${n.resumo.substring(0,85)}</div>
+                                    <a href="/noticia/${n.id}" class="read-more">Ler mais →</a>
+                                </div>
+                            </div>
                         `).join('') : '<p style="color: #888; grid-column: 1/-1; text-align: center; padding: 40px;">Nenhuma notícia de saúde.</p>';
                     }
                     const curiosGrid = document.querySelector('#curiosidades .grid-noticias');
                     if (curiosGrid && data.curiosidades) {
                         curiosGrid.innerHTML = data.curiosidades.length ? data.curiosidades.map(n => `
-                            <div class="card"><div class="card-decoration curiosidades"></div>${n.imagem ? `<img src="${n.imagem}" class="card-imagem">` : '<div class="card-imagem" style="background: linear-gradient(135deg, #e74c3c, #f39c12); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">🤔</div>'}<div class="card-content"><span class="card-badge badge-curiosidades">🤔 Curiosidade</span><h3><a href="/noticia/${n.id}">${n.titulo.substring(0,55)}</a></h3><div class="meta">📅 ${n.data}</div><div class="resumo">${n.resumo.substring(0,85)}</div><a href="/noticia/${n.id}" class="read-more">Ler mais →</a></div></div>
+                            <div class="card">
+                                <div class="card-decoration curiosidades"></div>
+                                <a href="/noticia/${n.id}" class="card-imagem-link">
+                                    <div class="card-imagem-wrapper">
+                                        ${n.imagem ? `<img src="${n.imagem}" class="card-imagem" loading="lazy">` : `<div class="card-imagem-fallback" style="background: linear-gradient(135deg, #e74c3c, #f39c12);">🤔</div>`}
+                                    </div>
+                                </a>
+                                <div class="card-content">
+                                    <span class="card-badge badge-curiosidades">🤔 Curiosidade</span>
+                                    <h3><a href="/noticia/${n.id}">${n.titulo.substring(0,55)}</a></h3>
+                                    <div class="meta">📅 ${n.data}</div>
+                                    <div class="resumo">${n.resumo.substring(0,85)}</div>
+                                    <a href="/noticia/${n.id}" class="read-more">Ler mais →</a>
+                                </div>
+                            </div>
                         `).join('') : '<p style="color: #888; grid-column: 1/-1; text-align: center; padding: 40px;">Nenhuma curiosidade publicada.</p>';
                     }
                 }).catch(e => console.log('Erro:', e));

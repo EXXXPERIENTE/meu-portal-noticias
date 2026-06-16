@@ -33,6 +33,7 @@ class Noticia(db.Model):
     conteudo = db.Column(db.Text, nullable=False)
     categoria = db.Column(db.String(50), nullable=False)  # 'tecnologia', 'saude', 'curiosidades'
     imagem = db.Column(db.String(200), nullable=True)
+    video_url = db.Column(db.String(200), nullable=True)  # <-- ALTERADO: Nova coluna para o link do vídeo
     visualizacoes = db.Column(db.Integer, default=0)
     data_publicacao = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -81,6 +82,8 @@ def verificar_migrar_banco():
         cursor.execute("ALTER TABLE noticia ADD COLUMN imagem TEXT")
     if 'visualizacoes' not in colunas:
         cursor.execute("ALTER TABLE noticia ADD COLUMN visualizacoes INTEGER DEFAULT 0")
+    if 'video_url' not in colunas:  # <-- ALTERADO: Migração automática para a nova coluna de vídeo
+        cursor.execute("ALTER TABLE noticia ADD COLUMN video_url TEXT")
 
     conn.commit()
     conn.close()
@@ -100,6 +103,22 @@ with app.app_context():
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# ALTERADO: Filtro utilitário para converter links do YouTube normais em URLs "embed" compatíveis com iFrames HTML
+def converter_link_youtube(url):
+    if not url:
+        return None
+    youtube_regex = r'(https?://)?(www\.)?(youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)([^&=%\?{\s]+)'
+    match = re.match(youtube_regex, url)
+    if match:
+        video_id = match.group(4)
+        return f"https://www.youtube.com/embed/{video_id}"
+    return url
+
+@app.context_processor
+def utility_processor():
+    return dict(converter_link_youtube=converter_link_youtube)
 
 
 @app.route('/')
@@ -212,6 +231,7 @@ def api_noticias():
             'data': n.data_publicacao.strftime('%d/%m/%Y às %H:%M'),
             'resumo': re.sub(r'<[^>]+>', '', n.conteudo)[:150] + '...',
             'imagem': n.imagem,
+            'video_url': n.video_url, # <-- ALTERADO: Incluído no retorno da API externa
             'categoria': n.categoria
         }
 
@@ -265,6 +285,7 @@ def nova_postagem():
         titulo = request.form['titulo']
         conteudo = request.form['conteudo']
         categoria = request.form['categoria']
+        video_url = request.form.get('video_url')  # <-- ALTERADO: Captura o campo de vídeo
         imagem = None
 
         if 'imagem' in request.files:
@@ -275,7 +296,8 @@ def nova_postagem():
                 imagem = f'/static/uploads/{filename}'
 
         if titulo and conteudo:
-            noticia = Noticia(titulo=titulo, conteudo=conteudo, categoria=categoria, imagem=imagem)
+            # ALTERADO: Atribui a variável video_url à instância criada
+            noticia = Noticia(titulo=titulo, conteudo=conteudo, categoria=categoria, imagem=imagem, video_url=video_url)
             db.session.add(noticia)
             db.session.commit()
             flash('Notícia publicada!', 'success')
@@ -294,7 +316,8 @@ def editar_postagem(id):
     if request.method == 'POST':
         noticia.titulo = request.form['titulo']
         noticia.conteudo = request.form['conteudo']
-        noticia.categoria = request.form['categoria']  # <-- Esta linha é CRUCIAL
+        noticia.categoria = request.form['categoria']
+        noticia.video_url = request.form.get('video_url')  # <-- ALTERADO: Atualiza o campo de vídeo
 
         # Processar imagem
         if 'imagem' in request.files:
