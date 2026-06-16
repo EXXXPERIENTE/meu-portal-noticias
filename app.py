@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -25,6 +25,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+# ============================================
+# ROTA PARA SERVIR ARQUIVOS ESTÁTICOS
+# ============================================
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
 
 # Modelos
 class Noticia(db.Model):
@@ -33,7 +39,7 @@ class Noticia(db.Model):
     conteudo = db.Column(db.Text, nullable=False)
     categoria = db.Column(db.String(50), nullable=False)  # 'tecnologia', 'saude', 'curiosidades'
     imagem = db.Column(db.String(200), nullable=True)
-    video_url = db.Column(db.String(200), nullable=True)  # <-- ALTERADO: Nova coluna para o link do vídeo
+    video_url = db.Column(db.String(200), nullable=True)
     visualizacoes = db.Column(db.Integer, default=0)
     data_publicacao = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -82,7 +88,7 @@ def verificar_migrar_banco():
         cursor.execute("ALTER TABLE noticia ADD COLUMN imagem TEXT")
     if 'visualizacoes' not in colunas:
         cursor.execute("ALTER TABLE noticia ADD COLUMN visualizacoes INTEGER DEFAULT 0")
-    if 'video_url' not in colunas:  # <-- ALTERADO: Migração automática para a nova coluna de vídeo
+    if 'video_url' not in colunas:
         cursor.execute("ALTER TABLE noticia ADD COLUMN video_url TEXT")
 
     conn.commit()
@@ -105,7 +111,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# ALTERADO: Filtro utilitário para converter links do YouTube normais em URLs "embed" compatíveis com iFrames HTML
 def converter_link_youtube(url):
     if not url:
         return None
@@ -116,6 +121,7 @@ def converter_link_youtube(url):
         return f"https://www.youtube.com/embed/{video_id}"
     return url
 
+
 @app.context_processor
 def utility_processor():
     return dict(converter_link_youtube=converter_link_youtube)
@@ -123,11 +129,9 @@ def utility_processor():
 
 @app.route('/')
 def index():
-    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(
-        10).all()
+    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(10).all()
     saude_noticias = Noticia.query.filter_by(categoria='saude').order_by(Noticia.data_publicacao.desc()).limit(10).all()
-    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(
-        Noticia.data_publicacao.desc()).limit(10).all()
+    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(Noticia.data_publicacao.desc()).limit(10).all()
 
     return render_template('index.html',
                            tech_noticias=tech_noticias,
@@ -219,11 +223,9 @@ def inscrever_newsletter():
 
 @app.route('/api/noticias')
 def api_noticias():
-    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(
-        10).all()
+    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(10).all()
     saude_noticias = Noticia.query.filter_by(categoria='saude').order_by(Noticia.data_publicacao.desc()).limit(10).all()
-    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(
-        Noticia.data_publicacao.desc()).limit(10).all()
+    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(Noticia.data_publicacao.desc()).limit(10).all()
 
     def formatar_noticia(n):
         return {
@@ -231,7 +233,7 @@ def api_noticias():
             'data': n.data_publicacao.strftime('%d/%m/%Y às %H:%M'),
             'resumo': re.sub(r'<[^>]+>', '', n.conteudo)[:150] + '...',
             'imagem': n.imagem,
-            'video_url': n.video_url, # <-- ALTERADO: Incluído no retorno da API externa
+            'video_url': n.video_url,
             'categoria': n.categoria
         }
 
@@ -285,7 +287,7 @@ def nova_postagem():
         titulo = request.form['titulo']
         conteudo = request.form['conteudo']
         categoria = request.form['categoria']
-        video_url = request.form.get('video_url')  # <-- ALTERADO: Captura o campo de vídeo
+        video_url = request.form.get('video_url')
         imagem = None
 
         if 'imagem' in request.files:
@@ -296,7 +298,6 @@ def nova_postagem():
                 imagem = f'/static/uploads/{filename}'
 
         if titulo and conteudo:
-            # ALTERADO: Atribui a variável video_url à instância criada
             noticia = Noticia(titulo=titulo, conteudo=conteudo, categoria=categoria, imagem=imagem, video_url=video_url)
             db.session.add(noticia)
             db.session.commit()
@@ -317,9 +318,8 @@ def editar_postagem(id):
         noticia.titulo = request.form['titulo']
         noticia.conteudo = request.form['conteudo']
         noticia.categoria = request.form['categoria']
-        noticia.video_url = request.form.get('video_url')  # <-- ALTERADO: Atualiza o campo de vídeo
+        noticia.video_url = request.form.get('video_url')
 
-        # Processar imagem
         if 'imagem' in request.files:
             file = request.files['imagem']
             if file and allowed_file(file.filename):
@@ -332,6 +332,7 @@ def editar_postagem(id):
         return redirect(url_for('admin_panel'))
 
     return render_template('editar_postagem.html', noticia=noticia)
+
 
 @app.route('/admin/excluir/<int:id>')
 def excluir_postagem(id):
@@ -462,6 +463,7 @@ def admin_perfil():
         return redirect(url_for('admin_panel'))
 
     return render_template('admin_perfil.html', admin=admin)
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
