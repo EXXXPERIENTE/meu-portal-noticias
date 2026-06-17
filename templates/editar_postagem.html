@@ -118,12 +118,48 @@
         .cat-tech { background: #3498db20; color: #3498db; }
         .cat-saude { background: #27ae6020; color: #27ae60; }
         .cat-curiosidades { background: #e74c3c20; color: #e74c3c; }
+
+        .campo-video {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .campo-video label {
+            color: #667eea;
+        }
+        .campo-video input {
+            border-color: #667eea;
+        }
+        .dica-video {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        .video-atual {
+            background: #e8f5e9;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 13px;
+            border-left: 4px solid #4caf50;
+        }
+        .video-atual code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✏️ Editar Postagem</h1>
-        <a href="/admin" class="btn-voltar">← Voltar ao Painel</a>
+        <h1>Editar Postagem</h1>
+        <a href="/admin" class="btn-voltar">Voltar ao Painel</a>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -133,76 +169,104 @@
             {% endif %}
         {% endwith %}
 
-        <!-- DEBUG: Mostrar categoria atual -->
+        <!-- Categoria atual -->
         <div style="background: #f0f2f5; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-            <strong>📌 Categoria atual:</strong>
-            <span class="categoria-atual
-                {% if noticia.categoria == 'tecnologia' %}cat-tech
-                {% elif noticia.categoria == 'saude' %}cat-saude
-                {% else %}cat-curiosidades{% endif %}">
-                {% if noticia.categoria == 'tecnologia' %}🚀 Tecnologia
-                {% elif noticia.categoria == 'saude' %}🏥 Saúde
-                {% else %}🤔 Curiosidades{% endif %}
-            </span>
+            <strong>Categoria atual:</strong>
+            {% if noticia.categoria == 'tecnologia' %}
+                <span class="categoria-atual cat-tech">Tecnologia</span>
+            {% elif noticia.categoria == 'saude' %}
+                <span class="categoria-atual cat-saude">Saude</span>
+            {% else %}
+                <span class="categoria-atual cat-curiosidades">Curiosidades</span>
+            {% endif %}
         </div>
 
         <form method="POST" enctype="multipart/form-data">
-            <label>📌 Título:</label>
+            <label>Titulo:</label>
             <input type="text" name="titulo" value="{{ noticia.titulo }}" required>
 
-            <label>🏷️ Categoria:</label>
-            <select name="categoria" required style="border: 2px solid #667eea;">
-                <option value="tecnologia" {% if noticia.categoria == 'tecnologia' %}selected{% endif %}>🚀 Tecnologia</option>
-                <option value="saude" {% if noticia.categoria == 'saude' %}selected{% endif %}>🏥 Saúde & Bem-estar</option>
-                <option value="curiosidades" {% if noticia.categoria == 'curiosidades' %}selected{% endif %}>🤔 Curiosidades</option>
+            <!-- ============================================ -->
+            <!-- SELECT CORRIGIDO - SEMPRE FECHADO CORRETAMENTE -->
+            <!-- ============================================ -->
+            <label>Categoria:</label>
+            <select name="categoria" required>
+                {% if noticia.categoria == 'tecnologia' %}
+                    <option value="tecnologia" selected>Tecnologia</option>
+                {% else %}
+                    <option value="tecnologia">Tecnologia</option>
+                {% endif %}
+
+                {% if noticia.categoria == 'saude' %}
+                    <option value="saude" selected>Saude</option>
+                {% else %}
+                    <option value="saude">Saude</option>
+                {% endif %}
+
+                {% if noticia.categoria == 'curiosidades' %}
+                    <option value="curiosidades" selected>Curiosidades</option>
+                {% else %}
+                    <option value="curiosidades">Curiosidades</option>
+                {% endif %}
             </select>
 
-            <label>🖼️ Imagem Destacada:</label>
+            <label>Imagem Destacada:</label>
             {% if noticia.imagem %}
-            <div>
-                <img src="{{ noticia.imagem }}" class="imagem-atual" alt="Imagem atual">
-                <p style="font-size: 12px; color: #888;">Imagem atual (será mantida se não enviar uma nova)</p>
-            </div>
+                <div>
+                    <img src="{{ noticia.imagem }}" class="imagem-atual" alt="Imagem atual">
+                    <p style="font-size: 12px; color: #888;">Imagem atual (sera mantida se nao enviar uma nova)</p>
+                </div>
             {% endif %}
             <input type="file" name="imagem" accept="image/*" id="imagemInput">
             <img id="preview" class="preview" alt="Nova imagem">
 
-            <label>📝 Conteúdo (HTML):</label>
+            <!-- URL do Video -->
+            <div class="campo-video">
+                <label>URL do Video (YouTube - opcional):</label>
+                <input type="text" name="video_url" value="{{ noticia.video_url or '' }}" placeholder="Ex: https://www.youtube.com/watch?v=VIDEO_ID">
+
+                {% if noticia.video_url %}
+                    <div class="video-atual">
+                        <strong>Video atual:</strong><br>
+                        <code>{{ noticia.video_url }}</code>
+                        <br><span style="font-size: 12px; color: #666;">(Deixe em branco para remover o video)</span>
+                    </div>
+                {% endif %}
+
+                <div class="dica-video">
+                    <strong>Dica:</strong> Cole o link do YouTube. Exemplos:
+                    <br>
+                    <code>https://www.youtube.com/watch?v=dQw4w9WgXcQ</code>
+                    <br>
+                    <code>https://youtu.be/dQw4w9WgXcQ</code>
+                </div>
+            </div>
+
+            <label>Conteudo (HTML):</label>
             <textarea name="conteudo" rows="12">{{ noticia.conteudo }}</textarea>
 
-            <button type="submit">💾 Salvar Alterações</button>
+            <button type="submit">Salvar Alteracoes</button>
         </form>
 
         <div class="dica">
-            <strong>⚠️ Importante:</strong> Ao editar, a categoria selecionada acima será a nova categoria da postagem.<br>
+            <strong>Importante:</strong> Ao editar, a categoria selecionada acima sera a nova categoria da postagem.<br>
             <strong>Categoria atual:</strong> {{ noticia.categoria }}<br>
             <strong>Certifique-se de selecionar a categoria correta antes de salvar!</strong>
         </div>
     </div>
 
     <script>
-        // Preview de imagem
-        document.getElementById('imagemInput')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
+        document.getElementById('imagemInput').addEventListener('change', function(e) {
+            var file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
+                var reader = new FileReader();
                 reader.onload = function(event) {
-                    const preview = document.getElementById('preview');
+                    var preview = document.getElementById('preview');
                     preview.src = event.target.result;
                     preview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
         });
-
-        // DEBUG: Mostrar no console qual categoria está selecionada
-        const selectCategoria = document.querySelector('select[name="categoria"]');
-        if (selectCategoria) {
-            console.log('Categoria atualmente selecionada:', selectCategoria.value);
-            selectCategoria.addEventListener('change', function() {
-                console.log('Nova categoria selecionada:', this.value);
-            });
-        }
     </script>
 </body>
 </html>

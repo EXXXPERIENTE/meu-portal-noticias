@@ -53,38 +53,28 @@
             border-bottom: 1px solid #eee;
         }
 
-        /* ============================================ */
-        /* CORREÇÃO: IMAGEM APARECE POR INTEIRO */
-        /* ============================================ */
+        /* Estilo para a imagem */
         .imagem-destaque-wrapper {
             width: 100%;
-            min-height: 300px;
-            max-height: 500px;
+            height: 400px;
             overflow: hidden;
             border-radius: 12px;
             margin: 20px 0;
-            background: #f0f2f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #1a1a2e;
             position: relative;
         }
 
         .imagem-destaque {
             width: 100%;
-            height: auto;
-            max-height: 500px;
-            object-fit: contain;
-            /* MOSTRA A IMAGEM INTEIRA */
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
             display: block;
-            border-radius: 12px;
         }
 
-        /* Fallback quando não tem imagem */
         .imagem-fallback {
             width: 100%;
-            min-height: 300px;
-            max-height: 500px;
+            height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,6 +82,29 @@
             color: white;
             border-radius: 12px;
             margin: 20px 0;
+        }
+
+        /* ============================================ */
+        /* ESTILO PARA O VÍDEO */
+        /* ============================================ */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Proporção 16:9 */
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .conteudo {
@@ -104,8 +117,7 @@
             height: auto;
         }
 
-        .conteudo h2,
-        .conteudo h3 {
+        .conteudo h2, .conteudo h3 {
             margin: 20px 0 10px;
             color: #667eea;
         }
@@ -185,8 +197,7 @@
             font-weight: bold;
         }
 
-        .form-group input,
-        .form-group textarea {
+        .form-group input, .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -244,26 +255,15 @@
             border: 1px solid #f5c6cb;
         }
 
-        /* ============================================ */
-        /* RESPONSIVIDADE */
-        /* ============================================ */
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
             }
-
             .imagem-destaque-wrapper {
-                min-height: 200px;
-                max-height: 350px;
+                height: 300px;
             }
-
-            .imagem-destaque {
-                max-height: 350px;
-            }
-
             .imagem-fallback {
-                min-height: 200px;
-                max-height: 350px;
+                height: 300px;
                 font-size: 56px;
             }
         }
@@ -272,26 +272,16 @@
             .container {
                 padding: 15px;
             }
-
             .imagem-destaque-wrapper {
-                min-height: 150px;
-                max-height: 250px;
+                height: 220px;
             }
-
-            .imagem-destaque {
-                max-height: 250px;
-            }
-
             .imagem-fallback {
-                min-height: 150px;
-                max-height: 250px;
+                height: 220px;
                 font-size: 40px;
             }
-
             h1 {
                 font-size: 22px;
             }
-
             .conteudo {
                 font-size: 16px;
             }
@@ -307,11 +297,11 @@
 
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
 
         <h1>{{ noticia.titulo }}</h1>
@@ -319,17 +309,17 @@
             📅 {{ noticia.data_publicacao.strftime('%d/%m/%Y às %H:%M') }} |
             🏷️ Categoria:
             {% if noticia.categoria == 'tecnologia' %}
-            🚀 Tecnologia
+                🚀 Tecnologia
             {% elif noticia.categoria == 'saude' %}
-            🏥 Saúde
+                🏥 Saúde
             {% else %}
-            🤔 Curiosidades
+                🤔 Curiosidades
             {% endif %} |
             👁️ {{ noticia.visualizacoes }} visualizações
         </div>
 
         <!-- ============================================ -->
-        <!-- IMAGEM CORRIGIDA - APARECE POR INTEIRO -->
+        <!-- IMAGEM DA NOTÍCIA -->
         <!-- ============================================ -->
         {% if noticia.imagem %}
         <div class="imagem-destaque-wrapper">
@@ -340,6 +330,20 @@
             {% if noticia.categoria == 'tecnologia' %}💻🚀
             {% elif noticia.categoria == 'saude' %}🏥💊
             {% else %}🤔💡{% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ============================================ -->
+        <!-- VÍDEO DO YOUTUBE - ADICIONADO AQUI -->
+        <!-- ============================================ -->
+        {% if noticia.video_url %}
+        <div class="video-container">
+            <iframe
+                src="{{ converter_link_youtube(noticia.video_url) }}"
+                frameborder="0"
+                allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
         </div>
         {% endif %}
 

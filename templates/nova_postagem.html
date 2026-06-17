@@ -109,12 +109,41 @@
             border-radius: 8px;
             display: none;
         }
+
+        /* Estilo para o campo de vídeo */
+        .campo-video {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .campo-video label {
+            color: #667eea;
+        }
+        .campo-video input {
+            border-color: #667eea;
+        }
+        .dica-video {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        .dica-video code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✍️ Nova Postagem</h1>
-        <a href="/admin" class="btn-voltar">← Voltar ao Painel</a>
+        <h1>Nova Postagem</h1>
+        <a href="/admin" class="btn-voltar">Voltar ao Painel</a>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -125,51 +154,66 @@
         {% endwith %}
 
         <form method="POST" enctype="multipart/form-data">
-            <label>📌 Título da Notícia:</label>
-            <input type="text" name="titulo" required placeholder="Ex: Nova IA revoluciona diagnóstico médico">
-            <label>🏷️ Categoria:</label>
-<select name="categoria" required>
-    <option value="tecnologia">🚀 Tecnologia</option>
-    <option value="saude">🏥 Saúde & Bem-estar</option>
-    <option value="curiosidades">🤔 Curiosidades</option>
-</select>
+            <label>Titulo da Noticia:</label>
+            <input type="text" name="titulo" required placeholder="Ex: Nova IA revoluciona diagnostico medico">
 
-            <label>🖼️ Imagem Destacada (opcional):</label>
+            <label>Categoria:</label>
+            <select name="categoria" required>
+                <option value="tecnologia">Tecnologia</option>
+                <option value="saude">Saude</option>
+                <option value="curiosidades">Curiosidades</option>
+            </select>
+
+            <label>Imagem Destacada (opcional):</label>
             <input type="file" name="imagem" accept="image/*" id="imagemInput">
-            <img id="preview" class="preview" alt="Prévia da imagem">
+            <img id="preview" class="preview" alt="Previa da imagem">
 
-            <label>📝 Conteúdo (HTML):</label>
-            <textarea id="conteudo" name="conteudo" rows="12" placeholder="Digite sua notícia aqui...
+            <!-- ============================================ -->
+            <!-- CAMPO PARA URL DO VIDEO - ADICIONADO -->
+            <!-- ============================================ -->
+            <div class="campo-video">
+                <label>URL do Video (YouTube - opcional):</label>
+                <input type="text" name="video_url" placeholder="Ex: https://www.youtube.com/watch?v=VIDEO_ID">
+                <div class="dica-video">
+                    <strong>Dica:</strong> Cole o link do YouTube. Exemplos:
+                    <br>
+                    <code>https://www.youtube.com/watch?v=dQw4w9WgXcQ</code>
+                    <br>
+                    <code>https://youtu.be/dQw4w9WgXcQ</code>
+                    <br><br>
+                    <strong>Como vai aparecer:</strong> O video sera exibido no topo da noticia, abaixo do titulo.
+                </div>
+            </div>
 
-Você pode usar HTML básico como:
-<h2>Subtítulo</h2>
-<p>Seu parágrafo aqui...</p>
+            <label>Conteudo (HTML):</label>
+            <textarea id="conteudo" name="conteudo" rows="12" placeholder="Digite sua noticia aqui...
+
+Voce pode usar HTML basico como:
+<h2>Subtitulo</h2>
+<p>Seu paragrafo aqui...</p>
 <ul><li>Item 1</li><li>Item 2</li></ul>
-<strong>Negrito</strong> e <em>itálico</em>"></textarea>
+<strong>Negrito</strong> e <em>italico</em>"></textarea>
 
-            <button type="submit">📢 Publicar Notícia</button>
+            <button type="submit">Publicar Noticia</button>
         </form>
 
         <div class="dica">
-            <strong>💡 Dicas de formatação (HTML básico):</strong><br>
-            • <code>&lt;h2&gt;Título secundário&lt;/h2&gt;</code> - Para subtítulos<br>
-            • <code>&lt;p&gt;Parágrafo&lt;/p&gt;</code> - Para texto normal<br>
-            • <code>&lt;strong&gt;negrito&lt;/strong&gt;</code> ou <code>&lt;b&gt;negrito&lt;/b&gt;</code><br>
-            • <code>&lt;em&gt;itálico&lt;/em&gt;</code> ou <code>&lt;i&gt;itálico&lt;/i&gt;</code><br>
-            • <code>&lt;ul&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/ul&gt;</code> - Lista com marcadores<br>
-            • <code>&lt;img src="URL_da_imagem" alt="descrição"&gt;</code> - Para adicionar imagens<br>
-            • <code>&lt;a href="URL"&gt;Clique aqui&lt;/a&gt;</code> - Links
+            <strong>Dicas de formatacao (HTML basico):</strong><br>
+            <code>&lt;h2&gt;Titulo secundario&lt;/h2&gt;</code> - Para subtitulos<br>
+            <code>&lt;p&gt;Paragrafo&lt;/p&gt;</code> - Para texto normal<br>
+            <code>&lt;strong&gt;negrito&lt;/strong&gt;</code> - Negrito<br>
+            <code>&lt;em&gt;italico&lt;/em&gt;</code> - Italico<br>
+            <code>&lt;ul&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/ul&gt;</code> - Lista com marcadores
         </div>
     </div>
 
     <script>
-        // Preview de imagem
-        document.getElementById('imagemInput')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
+        document.getElementById('imagemInput').addEventListener('change', function(e) {
+            var file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
+                var reader = new FileReader();
                 reader.onload = function(event) {
-                    const preview = document.getElementById('preview');
+                    var preview = document.getElementById('preview');
                     preview.src = event.target.result;
                     preview.style.display = 'block';
                 };
