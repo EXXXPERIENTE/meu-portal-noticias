@@ -106,7 +106,7 @@
             margin-bottom: 15px;
         }
 
-        /* GRID COM 4 COLUNAS FORÇADO */
+        /* GRID COM 4 COLUNAS */
         .grid-noticias {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
@@ -115,14 +115,12 @@
             width: 100% !important;
         }
 
-        /* 2 colunas em tablets */
         @media (max-width: 800px) {
             .grid-noticias {
                 grid-template-columns: repeat(2, 1fr) !important;
             }
         }
 
-        /* 1 coluna no celular */
         @media (max-width: 500px) {
             .grid-noticias {
                 grid-template-columns: 1fr !important;
@@ -171,7 +169,7 @@
         }
 
         /* ============================================ */
-        /* IMAGEM OCUPA TODO O ESPAÇO DO CARD */
+        /* IMAGEM CORRIGIDA - CENTRALIZADA E AJUSTADA */
         /* ============================================ */
         .card-imagem-wrapper {
             width: 100%;
@@ -182,9 +180,6 @@
             flex-shrink: 0;
         }
 
-        /* ============================================ */
-        /* CORREÇÃO: IMAGEM CLICÁVEL */
-        /* ============================================ */
         .card-imagem-link {
             display: block;
             width: 100%;
@@ -196,6 +191,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             display: block;
             transition: transform 0.3s ease;
         }
@@ -204,7 +200,6 @@
             transform: scale(1.03);
         }
 
-        /* Fallback para quando não tem imagem */
         .card-imagem-fallback {
             width: 100%;
             height: 100%;
@@ -215,6 +210,9 @@
             color: white;
         }
 
+        /* ============================================ */
+        /* TÍTULOS COLORIDOS E PROFISSIONAIS */
+        /* ============================================ */
         .card-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -249,6 +247,9 @@
             flex-direction: column;
         }
 
+        /* ============================================ */
+        /* TÍTULO COLORIDO E COM GRADIENTE */
+        /* ============================================ */
         .card-content h3 {
             font-size: 14px;
             margin-bottom: 6px;
@@ -257,13 +258,42 @@
         }
 
         .card-content h3 a {
-            color: #333;
             text-decoration: none;
-            transition: color 0.2s;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2d3436, #6c5ce7, #0984e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
         }
 
         .card-content h3 a:hover {
-            color: #667eea;
+            background: linear-gradient(135deg, #6c5ce7, #fd79a8, #fdcb6e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Títulos por categoria com cores diferentes */
+        .card.tech .card-content h3 a {
+            background: linear-gradient(135deg, #0984e3, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card.saude .card-content h3 a {
+            background: linear-gradient(135deg, #00b894, #00cec9, #55efc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card.curiosidades .card-content h3 a {
+            background: linear-gradient(135deg, #e17055, #d63031, #fd79a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .meta {
@@ -354,7 +384,6 @@
             scroll-behavior: smooth;
         }
 
-        /* FOOTER ESTILIZADO - J.CB. INFORMATICA */
         .footer {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #fff;
@@ -492,11 +521,8 @@
                 </div>
                 <div class="grid-noticias">
                     {% for noticia in tech_noticias %}
-                    <div class="card">
+                    <div class="card tech">
                         <div class="card-decoration tech"></div>
-                        <!-- ============================================ -->
-                        <!-- IMAGEM CLICÁVEL - Link direto na imagem -->
-                        <!-- ============================================ -->
                         <a href="/noticia/{{ noticia.id }}" class="card-imagem-link">
                             <div class="card-imagem-wrapper">
                                 {% if noticia.imagem %}
@@ -529,11 +555,8 @@
                 </div>
                 <div class="grid-noticias">
                     {% for noticia in saude_noticias %}
-                    <div class="card">
+                    <div class="card saude">
                         <div class="card-decoration saude"></div>
-                        <!-- ============================================ -->
-                        <!-- IMAGEM CLICÁVEL -->
-                        <!-- ============================================ -->
                         <a href="/noticia/{{ noticia.id }}" class="card-imagem-link">
                             <div class="card-imagem-wrapper">
                                 {% if noticia.imagem %}
@@ -566,11 +589,8 @@
                 </div>
                 <div class="grid-noticias">
                     {% for noticia in curiosidades_noticias %}
-                    <div class="card">
+                    <div class="card curiosidades">
                         <div class="card-decoration curiosidades"></div>
-                        <!-- ============================================ -->
-                        <!-- IMAGEM CLICÁVEL -->
-                        <!-- ============================================ -->
                         <a href="/noticia/{{ noticia.id }}" class="card-imagem-link">
                             <div class="card-imagem-wrapper">
                                 {% if noticia.imagem %}
@@ -607,7 +627,6 @@
         </div>
     </div>
 
-    <!-- FOOTER J.CB. INFORMATICA COM WHATSAPP COM MENSAGEM AUTOMÁTICA -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -635,7 +654,7 @@
                 <div class="footer-section">
                     <h3>📅 Informações</h3>
                     <p>Layout com 4 cards por linha</p>
-                    <p>CSS atualizado: 12/06/2026</p>
+                    <p>CSS atualizado: 17/06/2026</p>
                     <p>© 2025 J.CB. INFORMATICA</p>
                     <p>Todos os direitos reservados</p>
                 </div>
@@ -647,7 +666,6 @@
     </footer>
 
     <script>
-        // Newsletter AJAX
         document.getElementById('newsletterForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('newsletterEmail').value;
@@ -666,7 +684,6 @@
             }
         });
 
-        // Atualização automática
         function carregarNoticiasAtualizadas() {
             fetch('/api/noticias')
                 .then(response => response.json())
@@ -674,7 +691,7 @@
                     const techGrid = document.querySelector('#tecnologia .grid-noticias');
                     if (techGrid && data.tecnologia) {
                         techGrid.innerHTML = data.tecnologia.length ? data.tecnologia.map(n => `
-                            <div class="card">
+                            <div class="card tech">
                                 <div class="card-decoration tech"></div>
                                 <a href="/noticia/${n.id}" class="card-imagem-link">
                                     <div class="card-imagem-wrapper">
@@ -694,7 +711,7 @@
                     const saudeGrid = document.querySelector('#saude .grid-noticias');
                     if (saudeGrid && data.saude) {
                         saudeGrid.innerHTML = data.saude.length ? data.saude.map(n => `
-                            <div class="card">
+                            <div class="card saude">
                                 <div class="card-decoration saude"></div>
                                 <a href="/noticia/${n.id}" class="card-imagem-link">
                                     <div class="card-imagem-wrapper">
@@ -714,7 +731,7 @@
                     const curiosGrid = document.querySelector('#curiosidades .grid-noticias');
                     if (curiosGrid && data.curiosidades) {
                         curiosGrid.innerHTML = data.curiosidades.length ? data.curiosidades.map(n => `
-                            <div class="card">
+                            <div class="card curiosidades">
                                 <div class="card-decoration curiosidades"></div>
                                 <a href="/noticia/${n.id}" class="card-imagem-link">
                                     <div class="card-imagem-wrapper">
@@ -734,7 +751,7 @@
                 }).catch(e => console.log('Erro:', e));
         }
         setInterval(carregarNoticiasAtualizadas, 30000);
-        console.log('✅ J.CB. INFORMATICA - Site carregado com sucesso! WhatsApp com mensagem automática ativado!');
+        console.log('✅ J.CB. INFORMATICA - Site carregado com sucesso!');
     </script>
 </body>
 </html>
