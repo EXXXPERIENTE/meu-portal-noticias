@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ noticia.titulo }} - J.C.B. INFORMATICA</title>
     <style>
+        /* ============================================ */
+        /* RESET E ESTILOS GLOBAIS - NUNCA SOBRESCRITOS */
+        /* ============================================ */
         * {
             margin: 0;
             padding: 0;
@@ -13,198 +16,193 @@
 
         body {
             font-family: 'Georgia', serif;
-            line-height: 1.8;
-            background: #fafafa;
-            color: #333;
+            background: #fafafa !important;
+            color: #333 !important;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 0;
-            text-align: center;
+        /* ============================================ */
+        /* HEADER - FIXO E ISOLADO */
+        /* ============================================ */
+        .header-fixo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            padding: 15px 0 !important;
+            text-align: center !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 9999 !important;
         }
 
-        .header a {
-            color: white;
-            text-decoration: none;
+        .header-fixo a {
+            color: white !important;
+            text-decoration: none !important;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        /* ============================================ */
+        /* CONTAINER PRINCIPAL */
+        /* ============================================ */
+        .container-principal {
+            max-width: 900px !important;
+            margin: 0 auto !important;
+            background: white !important;
+            padding: 40px !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
         }
 
-        h1 {
+        .container-principal h1 {
             color: #2d3436 !important;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 28px;
+            border-bottom: 2px solid #667eea !important;
+            padding-bottom: 10px !important;
+            margin-bottom: 20px !important;
+            font-size: 28px !important;
         }
 
-        .meta {
+        .container-principal .meta {
             color: #555 !important;
-            font-size: 14px;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            font-size: 14px !important;
+            margin-bottom: 30px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 1px solid #eee !important;
         }
 
         /* ============================================ */
-        /* ISOLAR O CONTEÚDO DA NOTÍCIA */
+        /* CONTEÚDO DA NOTÍCIA - ISOLADO COM OVERFLOW */
         /* ============================================ */
-        .conteudo-wrapper {
-            margin: 20px 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        /* Forçar o conteúdo a ficar dentro da caixa */
-        .conteudo-wrapper > * {
-            max-width: 100% !important;
-        }
-
-        /* Corrigir problemas de layout interno */
-        .conteudo-wrapper div,
-        .conteudo-wrapper section,
-        .conteudo-wrapper article {
-            max-width: 100% !important;
+        .conteudo-isolado {
+            margin: 20px 0 !important;
+            padding: 0 !important;
             overflow: hidden !important;
+            width: 100% !important;
+        }
+
+        /* Força todos os elementos dentro do conteúdo */
+        .conteudo-isolado * {
+            max-width: 100% !important;
         }
 
         /* ============================================ */
-        /* IMAGEM - MOSTRA INTEIRA */
+        /* BOTÃO VOLTAR - SEMPRE VISÍVEL */
+        /* ============================================ */
+        .btn-voltar-fixo {
+            margin-top: 30px !important;
+            padding-top: 20px !important;
+            border-top: 2px solid #eee !important;
+            clear: both !important;
+            position: relative !important;
+            z-index: 9999 !important;
+        }
+
+        .btn-voltar-fixo a {
+            display: inline-block !important;
+            padding: 12px 25px !important;
+            background: #667eea !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            border-radius: 8px !important;
+            font-weight: bold !important;
+            transition: background 0.3s !important;
+            border: none !important;
+            cursor: pointer !important;
+            font-size: 16px !important;
+            font-family: 'Georgia', serif !important;
+        }
+
+        .btn-voltar-fixo a:hover {
+            background: #5a67d8 !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        /* ============================================ */
+        /* IMAGEM */
         /* ============================================ */
         .imagem-destaque-wrapper {
-            width: 100%;
-            max-height: 500px;
-            min-height: 200px;
-            overflow: hidden;
-            border-radius: 12px;
-            margin: 20px 0;
-            background: #1a1a2e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            width: 100% !important;
+            max-height: 500px !important;
+            min-height: 200px !important;
+            overflow: hidden !important;
+            border-radius: 12px !important;
+            margin: 20px 0 !important;
+            background: #1a1a2e !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
 
         .imagem-destaque {
-            width: 100%;
-            height: auto;
-            max-height: 500px;
-            object-fit: contain;
-            object-position: center;
-            display: block;
-            border-radius: 12px;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 500px !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            display: block !important;
+            border-radius: 12px !important;
         }
 
         .imagem-fallback {
-            width: 100%;
-            min-height: 300px;
-            max-height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 72px;
-            color: white;
-            border-radius: 12px;
-            margin: 20px 0;
+            width: 100% !important;
+            min-height: 300px !important;
+            max-height: 500px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 72px !important;
+            color: white !important;
+            border-radius: 12px !important;
+            margin: 20px 0 !important;
         }
 
         /* ============================================ */
         /* VÍDEO */
         /* ============================================ */
         .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            margin: 20px 0;
-            border-radius: 12px;
-            background: #000;
+            position: relative !important;
+            width: 100% !important;
+            padding-bottom: 56.25% !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            margin: 20px 0 !important;
+            border-radius: 12px !important;
+            background: #000 !important;
         }
 
         .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
         }
 
         /* ============================================ */
-        /* BOTÃO VOLTAR - FORA DO CONTEÚDO */
-        /* ============================================ */
-        .btn-voltar-wrapper {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #eee;
-            clear: both;
-        }
-
-        .btn-voltar {
-            display: inline-block;
-            padding: 12px 25px;
-            background: #667eea !important;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .btn-voltar:hover {
-            background: #5a67d8 !important;
-            color: #ffffff !important;
-            text-decoration: none;
-        }
-
-        /* ============================================ */
-        /* LIKE */
+        /* LIKE E COMENTÁRIOS */
         /* ============================================ */
         .like-section {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin: 30px 0;
-            clear: both;
+            text-align: center !important;
+            padding: 20px !important;
+            background: #f8f9fa !important;
+            border-radius: 8px !important;
+            margin: 30px 0 !important;
+            clear: both !important;
         }
 
         .like-btn {
-            background: none;
-            border: none;
-            font-size: 48px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .like-btn:hover {
-            transform: scale(1.1);
+            background: none !important;
+            border: none !important;
+            font-size: 48px !important;
+            cursor: pointer !important;
         }
 
         .like-count {
-            font-size: 18px;
+            font-size: 18px !important;
             color: #555 !important;
-            margin-top: 10px;
+            margin-top: 10px !important;
         }
 
-        /* ============================================ */
-        /* COMENTÁRIOS */
-        /* ============================================ */
         .comentarios {
-            margin: 40px 0;
-            clear: both;
+            margin: 40px 0 !important;
+            clear: both !important;
         }
 
         .comentarios h2 {
@@ -212,23 +210,21 @@
         }
 
         .comentario {
-            background: #f8f9fa;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            background: #f8f9fa !important;
+            padding: 15px !important;
+            margin-bottom: 15px !important;
+            border-radius: 8px !important;
+            border-left: 4px solid #667eea !important;
         }
 
         .comentario-nome {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 5px;
+            font-weight: bold !important;
+            color: #667eea !important;
         }
 
         .comentario-data {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 10px;
+            font-size: 12px !important;
+            color: #999 !important;
         }
 
         .comentario-conteudo {
@@ -236,51 +232,50 @@
         }
 
         .form-comentario {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
+            background: #f8f9fa !important;
+            padding: 20px !important;
+            border-radius: 8px !important;
+            margin-top: 30px !important;
         }
 
         .form-comentario h3 {
             color: #2d3436 !important;
-            margin-bottom: 20px;
+            margin-bottom: 20px !important;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 15px !important;
         }
 
         .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            display: block !important;
+            margin-bottom: 5px !important;
+            font-weight: bold !important;
             color: #2d3436 !important;
         }
 
         .form-group input,
         .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: inherit;
+            width: 100% !important;
+            padding: 10px !important;
+            border: 1px solid #ddd !important;
+            border-radius: 5px !important;
             color: #2d3436 !important;
         }
 
         .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
+            min-height: 100px !important;
+            resize: vertical !important;
         }
 
         .form-comentario button {
             background: #667eea !important;
             color: #ffffff !important;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
+            padding: 10px 20px !important;
+            border: none !important;
+            border-radius: 5px !important;
+            cursor: pointer !important;
+            font-weight: bold !important;
         }
 
         .form-comentario button:hover {
@@ -289,97 +284,101 @@
         }
 
         .alert {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 12px !important;
+            border-radius: 8px !important;
+            margin-bottom: 20px !important;
         }
 
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #d4edda !important;
+            color: #155724 !important;
         }
 
         .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #f8d7da !important;
+            color: #721c24 !important;
         }
 
         /* ============================================ */
         /* RESPONSIVIDADE */
         /* ============================================ */
         @media (max-width: 600px) {
-            .container {
-                padding: 20px;
+            .container-principal {
+                padding: 20px !important;
             }
 
-            h1 {
-                font-size: 22px;
+            .container-principal h1 {
+                font-size: 22px !important;
             }
 
             .imagem-destaque-wrapper {
-                max-height: 350px;
-                min-height: 150px;
+                max-height: 350px !important;
+                min-height: 150px !important;
             }
 
             .imagem-destaque {
-                max-height: 350px;
+                max-height: 350px !important;
             }
 
             .imagem-fallback {
-                min-height: 200px;
-                max-height: 350px;
-                font-size: 48px;
+                min-height: 200px !important;
+                max-height: 350px !important;
+                font-size: 48px !important;
             }
 
-            .btn-voltar {
-                padding: 10px 20px;
-                font-size: 14px;
-                width: 100%;
-                text-align: center;
+            .btn-voltar-fixo a {
+                padding: 10px 20px !important;
+                font-size: 14px !important;
+                width: 100% !important;
+                text-align: center !important;
             }
         }
 
         @media (max-width: 400px) {
-            .container {
-                padding: 15px;
+            .container-principal {
+                padding: 15px !important;
             }
 
-            h1 {
-                font-size: 18px;
+            .container-principal h1 {
+                font-size: 18px !important;
             }
 
             .imagem-destaque-wrapper {
-                max-height: 250px;
-                min-height: 120px;
+                max-height: 250px !important;
+                min-height: 120px !important;
             }
 
             .imagem-destaque {
-                max-height: 250px;
+                max-height: 250px !important;
             }
 
             .imagem-fallback {
-                min-height: 150px;
-                max-height: 250px;
-                font-size: 36px;
+                min-height: 150px !important;
+                max-height: 250px !important;
+                font-size: 36px !important;
             }
 
-            .btn-voltar {
-                padding: 8px 16px;
-                font-size: 13px;
+            .btn-voltar-fixo a {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="container">
+    <!-- ============================================ -->
+    <!-- HEADER FIXO - NUNCA AFETADO -->
+    <!-- ============================================ -->
+    <div class="header-fixo">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 15px;">
             <a href="/">← Voltar para o início</a>
         </div>
     </div>
 
-    <div class="container">
+    <!-- ============================================ -->
+    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- ============================================ -->
+    <div class="container-principal">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -430,7 +429,7 @@
         <!-- ============================================ -->
         <!-- CONTEÚDO DA NOTÍCIA - ISOLADO -->
         <!-- ============================================ -->
-        <div class="conteudo-wrapper">
+        <div class="conteudo-isolado">
             {{ noticia.conteudo|safe }}
         </div>
 
@@ -483,10 +482,10 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- BOTÃO VOLTAR - ISOLADO E FORA DO CONTEÚDO -->
+        <!-- BOTÃO VOLTAR - SEMPRE VISÍVEL E ISOLADO -->
         <!-- ============================================ -->
-        <div class="btn-voltar-wrapper">
-            <a href="/" class="btn-voltar">← Voltar para o início</a>
+        <div class="btn-voltar-fixo">
+            <a href="/">← Voltar para o início</a>
         </div>
     </div>
 
