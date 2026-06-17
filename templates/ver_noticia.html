@@ -6,7 +6,7 @@
     <title>{{ noticia.titulo }} - J.C.B. INFORMATICA</title>
     <style>
         /* ============================================ */
-        /* RESET E ESTILOS GLOBAIS - NUNCA SOBRESCRITOS */
+        /* RESET GLOBAL - MÍNIMO NECESSÁRIO */
         /* ============================================ */
         * {
             margin: 0;
@@ -16,12 +16,12 @@
 
         body {
             font-family: 'Georgia', serif;
-            background: #fafafa !important;
-            color: #333 !important;
+            background: #fafafa;
+            color: #333;
         }
 
         /* ============================================ */
-        /* HEADER - FIXO E ISOLADO */
+        /* HEADER - ISOLADO E FORÇADO */
         /* ============================================ */
         .header-fixo {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
@@ -36,54 +36,61 @@
         .header-fixo a {
             color: white !important;
             text-decoration: none !important;
+            font-weight: bold !important;
+        }
+
+        .header-fixo .container-inner {
+            max-width: 900px !important;
+            margin: 0 auto !important;
+            padding: 0 15px !important;
         }
 
         /* ============================================ */
-        /* CONTAINER PRINCIPAL */
+        /* CONTAINER PRINCIPAL - SEM FORÇA */
         /* ============================================ */
         .container-principal {
-            max-width: 900px !important;
-            margin: 0 auto !important;
-            background: white !important;
-            padding: 40px !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .container-principal h1 {
-            color: #2d3436 !important;
-            border-bottom: 2px solid #667eea !important;
-            padding-bottom: 10px !important;
-            margin-bottom: 20px !important;
-            font-size: 28px !important;
+            color: #2d3436;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 28px;
         }
 
         .container-principal .meta {
-            color: #555 !important;
-            font-size: 14px !important;
-            margin-bottom: 30px !important;
-            padding-bottom: 15px !important;
-            border-bottom: 1px solid #eee !important;
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
         }
 
         /* ============================================ */
-        /* CONTEÚDO DA NOTÍCIA - ISOLADO COM OVERFLOW */
+        /* CONTEÚDO DA NOTÍCIA - LIVRE */
         /* ============================================ */
-        .conteudo-isolado {
-            margin: 20px 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            width: 100% !important;
+        .conteudo-noticia {
+            margin: 20px 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100%;
         }
 
-        /* Força todos os elementos dentro do conteúdo */
-        .conteudo-isolado * {
+        /* Garante que o conteúdo não vaze */
+        .conteudo-noticia * {
             max-width: 100% !important;
         }
 
         /* ============================================ */
-        /* BOTÃO VOLTAR - SEMPRE VISÍVEL */
+        /* BOTÃO VOLTAR - ISOLADO E FORÇADO */
         /* ============================================ */
-        .btn-voltar-fixo {
+        .btn-voltar-wrapper {
             margin-top: 30px !important;
             padding-top: 20px !important;
             border-top: 2px solid #eee !important;
@@ -92,7 +99,7 @@
             z-index: 9999 !important;
         }
 
-        .btn-voltar-fixo a {
+        .btn-voltar-wrapper a {
             display: inline-block !important;
             padding: 12px 25px !important;
             background: #667eea !important;
@@ -107,7 +114,7 @@
             font-family: 'Georgia', serif !important;
         }
 
-        .btn-voltar-fixo a:hover {
+        .btn-voltar-wrapper a:hover {
             background: #5a67d8 !important;
             color: #ffffff !important;
             text-decoration: none !important;
@@ -117,186 +124,185 @@
         /* IMAGEM */
         /* ============================================ */
         .imagem-destaque-wrapper {
-            width: 100% !important;
-            max-height: 500px !important;
-            min-height: 200px !important;
-            overflow: hidden !important;
-            border-radius: 12px !important;
-            margin: 20px 0 !important;
-            background: #1a1a2e !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            width: 100%;
+            max-height: 500px;
+            min-height: 200px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin: 20px 0;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .imagem-destaque {
-            width: 100% !important;
-            height: auto !important;
-            max-height: 500px !important;
-            object-fit: contain !important;
-            object-position: center !important;
-            display: block !important;
-            border-radius: 12px !important;
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            border-radius: 12px;
         }
 
         .imagem-fallback {
-            width: 100% !important;
-            min-height: 300px !important;
-            max-height: 500px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-size: 72px !important;
-            color: white !important;
-            border-radius: 12px !important;
-            margin: 20px 0 !important;
+            width: 100%;
+            min-height: 300px;
+            max-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 72px;
+            color: white;
+            border-radius: 12px;
+            margin: 20px 0;
         }
 
         /* ============================================ */
         /* VÍDEO */
         /* ============================================ */
         .video-container {
-            position: relative !important;
-            width: 100% !important;
-            padding-bottom: 56.25% !important;
-            height: 0 !important;
-            overflow: hidden !important;
-            margin: 20px 0 !important;
-            border-radius: 12px !important;
-            background: #000 !important;
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0;
+            border-radius: 12px;
+            background: #000;
         }
 
         .video-container iframe {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            border: none !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         /* ============================================ */
         /* LIKE E COMENTÁRIOS */
         /* ============================================ */
         .like-section {
-            text-align: center !important;
-            padding: 20px !important;
-            background: #f8f9fa !important;
-            border-radius: 8px !important;
-            margin: 30px 0 !important;
-            clear: both !important;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 30px 0;
+            clear: both;
         }
 
         .like-btn {
-            background: none !important;
-            border: none !important;
-            font-size: 48px !important;
-            cursor: pointer !important;
+            background: none;
+            border: none;
+            font-size: 48px;
+            cursor: pointer;
         }
 
         .like-count {
-            font-size: 18px !important;
-            color: #555 !important;
-            margin-top: 10px !important;
+            font-size: 18px;
+            color: #555;
+            margin-top: 10px;
         }
 
         .comentarios {
-            margin: 40px 0 !important;
-            clear: both !important;
+            margin: 40px 0;
+            clear: both;
         }
 
         .comentarios h2 {
-            color: #2d3436 !important;
+            color: #2d3436;
         }
 
         .comentario {
-            background: #f8f9fa !important;
-            padding: 15px !important;
-            margin-bottom: 15px !important;
-            border-radius: 8px !important;
-            border-left: 4px solid #667eea !important;
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
         }
 
         .comentario-nome {
-            font-weight: bold !important;
-            color: #667eea !important;
+            font-weight: bold;
+            color: #667eea;
         }
 
         .comentario-data {
-            font-size: 12px !important;
-            color: #999 !important;
+            font-size: 12px;
+            color: #999;
         }
 
         .comentario-conteudo {
-            color: #2d3436 !important;
+            color: #2d3436;
         }
 
         .form-comentario {
-            background: #f8f9fa !important;
-            padding: 20px !important;
-            border-radius: 8px !important;
-            margin-top: 30px !important;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
         }
 
         .form-comentario h3 {
-            color: #2d3436 !important;
-            margin-bottom: 20px !important;
+            color: #2d3436;
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 15px !important;
+            margin-bottom: 15px;
         }
 
         .form-group label {
-            display: block !important;
-            margin-bottom: 5px !important;
-            font-weight: bold !important;
-            color: #2d3436 !important;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3436;
         }
 
         .form-group input,
         .form-group textarea {
-            width: 100% !important;
-            padding: 10px !important;
-            border: 1px solid #ddd !important;
-            border-radius: 5px !important;
-            color: #2d3436 !important;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #2d3436;
         }
 
         .form-group textarea {
-            min-height: 100px !important;
-            resize: vertical !important;
+            min-height: 100px;
+            resize: vertical;
         }
 
         .form-comentario button {
-            background: #667eea !important;
-            color: #ffffff !important;
-            padding: 10px 20px !important;
-            border: none !important;
-            border-radius: 5px !important;
-            cursor: pointer !important;
-            font-weight: bold !important;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         .form-comentario button:hover {
-            background: #5a67d8 !important;
-            color: #ffffff !important;
+            background: #5a67d8;
         }
 
         .alert {
-            padding: 12px !important;
-            border-radius: 8px !important;
-            margin-bottom: 20px !important;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
         .alert-success {
-            background: #d4edda !important;
-            color: #155724 !important;
+            background: #d4edda;
+            color: #155724;
         }
 
         .alert-danger {
-            background: #f8d7da !important;
-            color: #721c24 !important;
+            background: #f8d7da;
+            color: #721c24;
         }
 
         /* ============================================ */
@@ -304,29 +310,29 @@
         /* ============================================ */
         @media (max-width: 600px) {
             .container-principal {
-                padding: 20px !important;
+                padding: 20px;
             }
 
             .container-principal h1 {
-                font-size: 22px !important;
+                font-size: 22px;
             }
 
             .imagem-destaque-wrapper {
-                max-height: 350px !important;
-                min-height: 150px !important;
+                max-height: 350px;
+                min-height: 150px;
             }
 
             .imagem-destaque {
-                max-height: 350px !important;
+                max-height: 350px;
             }
 
             .imagem-fallback {
-                min-height: 200px !important;
-                max-height: 350px !important;
-                font-size: 48px !important;
+                min-height: 200px;
+                max-height: 350px;
+                font-size: 48px;
             }
 
-            .btn-voltar-fixo a {
+            .btn-voltar-wrapper a {
                 padding: 10px 20px !important;
                 font-size: 14px !important;
                 width: 100% !important;
@@ -336,29 +342,29 @@
 
         @media (max-width: 400px) {
             .container-principal {
-                padding: 15px !important;
+                padding: 15px;
             }
 
             .container-principal h1 {
-                font-size: 18px !important;
+                font-size: 18px;
             }
 
             .imagem-destaque-wrapper {
-                max-height: 250px !important;
-                min-height: 120px !important;
+                max-height: 250px;
+                min-height: 120px;
             }
 
             .imagem-destaque {
-                max-height: 250px !important;
+                max-height: 250px;
             }
 
             .imagem-fallback {
-                min-height: 150px !important;
-                max-height: 250px !important;
-                font-size: 36px !important;
+                min-height: 150px;
+                max-height: 250px;
+                font-size: 36px;
             }
 
-            .btn-voltar-fixo a {
+            .btn-voltar-wrapper a {
                 padding: 8px 16px !important;
                 font-size: 13px !important;
             }
@@ -367,10 +373,10 @@
 </head>
 <body>
     <!-- ============================================ -->
-    <!-- HEADER FIXO - NUNCA AFETADO -->
+    <!-- HEADER FIXO - ISOLADO -->
     <!-- ============================================ -->
     <div class="header-fixo">
-        <div style="max-width: 900px; margin: 0 auto; padding: 0 15px;">
+        <div class="container-inner">
             <a href="/">← Voltar para o início</a>
         </div>
     </div>
@@ -427,9 +433,9 @@
         {% endif %}
 
         <!-- ============================================ -->
-        <!-- CONTEÚDO DA NOTÍCIA - ISOLADO -->
+        <!-- CONTEÚDO DA NOTÍCIA - LIVRE (SEM FORÇA) -->
         <!-- ============================================ -->
-        <div class="conteudo-isolado">
+        <div class="conteudo-noticia">
             {{ noticia.conteudo|safe }}
         </div>
 
@@ -482,9 +488,9 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- BOTÃO VOLTAR - SEMPRE VISÍVEL E ISOLADO -->
+        <!-- BOTÃO VOLTAR - ISOLADO E FORÇADO -->
         <!-- ============================================ -->
-        <div class="btn-voltar-fixo">
+        <div class="btn-voltar-wrapper">
             <a href="/">← Voltar para o início</a>
         </div>
     </div>
