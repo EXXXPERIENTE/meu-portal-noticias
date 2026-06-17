@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ noticia.titulo }} - Portal Tech+Saúde</title>
+    <title>{{ noticia.titulo }} - J.C.B. INFORMATICA</title>
     <style>
         * {
             margin: 0;
@@ -39,14 +39,15 @@
         }
 
         h1 {
-            color: #667eea;
+            color: #2d3436 !important;
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
             margin-bottom: 20px;
+            font-size: 28px;
         }
 
         .meta {
-            color: #888;
+            color: #555 !important;
             font-size: 14px;
             margin-bottom: 30px;
             padding-bottom: 15px;
@@ -54,7 +55,29 @@
         }
 
         /* ============================================ */
-        /* IMAGEM - CORRIGIDA PARA MOSTRAR INTEIRA */
+        /* ISOLAR O CONTEÚDO DA NOTÍCIA */
+        /* ============================================ */
+        .conteudo-wrapper {
+            margin: 20px 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Forçar o conteúdo a ficar dentro da caixa */
+        .conteudo-wrapper > * {
+            max-width: 100% !important;
+        }
+
+        /* Corrigir problemas de layout interno */
+        .conteudo-wrapper div,
+        .conteudo-wrapper section,
+        .conteudo-wrapper article {
+            max-width: 100% !important;
+            overflow: hidden !important;
+        }
+
+        /* ============================================ */
+        /* IMAGEM - MOSTRA INTEIRA */
         /* ============================================ */
         .imagem-destaque-wrapper {
             width: 100%;
@@ -75,7 +98,6 @@
             height: auto;
             max-height: 500px;
             object-fit: contain;
-            /* MOSTRA A IMAGEM INTEIRA */
             object-position: center;
             display: block;
             border-radius: 12px;
@@ -118,65 +140,45 @@
         }
 
         /* ============================================ */
-        /* RESPONSIVIDADE PARA CELULAR */
+        /* BOTÃO VOLTAR - FORA DO CONTEÚDO */
         /* ============================================ */
-        @media (max-width: 600px) {
-            .imagem-destaque-wrapper {
-                max-height: 350px;
-                min-height: 150px;
-            }
-
-            .imagem-destaque {
-                max-height: 350px;
-            }
-
-            .imagem-fallback {
-                min-height: 200px;
-                max-height: 350px;
-                font-size: 48px;
-            }
+        .btn-voltar-wrapper {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            clear: both;
         }
 
-        @media (max-width: 400px) {
-            .imagem-destaque-wrapper {
-                max-height: 250px;
-                min-height: 120px;
-            }
-
-            .imagem-destaque {
-                max-height: 250px;
-            }
-
-            .imagem-fallback {
-                min-height: 150px;
-                max-height: 250px;
-                font-size: 36px;
-            }
-        }
-
-        .conteudo {
-            font-size: 18px;
-            margin: 30px 0;
-        }
-
-        .conteudo img {
-            max-width: 100%;
-            height: auto;
+        .btn-voltar {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #667eea !important;
+            color: #ffffff !important;
+            text-decoration: none;
             border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
         }
 
-        .conteudo h2,
-        .conteudo h3 {
-            margin: 20px 0 10px;
-            color: #667eea;
+        .btn-voltar:hover {
+            background: #5a67d8 !important;
+            color: #ffffff !important;
+            text-decoration: none;
         }
 
+        /* ============================================ */
+        /* LIKE */
+        /* ============================================ */
         .like-section {
             text-align: center;
             padding: 20px;
             background: #f8f9fa;
             border-radius: 8px;
             margin: 30px 0;
+            clear: both;
         }
 
         .like-btn {
@@ -193,12 +195,20 @@
 
         .like-count {
             font-size: 18px;
-            color: #666;
+            color: #555 !important;
             margin-top: 10px;
         }
 
+        /* ============================================ */
+        /* COMENTÁRIOS */
+        /* ============================================ */
         .comentarios {
             margin: 40px 0;
+            clear: both;
+        }
+
+        .comentarios h2 {
+            color: #2d3436 !important;
         }
 
         .comentario {
@@ -222,7 +232,7 @@
         }
 
         .comentario-conteudo {
-            color: #555;
+            color: #2d3436 !important;
         }
 
         .form-comentario {
@@ -233,6 +243,7 @@
         }
 
         .form-comentario h3 {
+            color: #2d3436 !important;
             margin-bottom: 20px;
         }
 
@@ -244,6 +255,7 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #2d3436 !important;
         }
 
         .form-group input,
@@ -253,6 +265,7 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-family: inherit;
+            color: #2d3436 !important;
         }
 
         .form-group textarea {
@@ -260,50 +273,19 @@
             resize: vertical;
         }
 
-        button {
-    background: #667eea !important;
-    color: #ffffff !important;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-button:hover {
-    background: #5a67d8 !important;
-    color: #ffffff !important;
-}
-
-        button:hover {
-            background: #5a67d8;
+        .form-comentario button {
+            background: #667eea !important;
+            color: #ffffff !important;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
-        .btn-voltar {
-    background: #667eea !important;
-    color: #ffffff !important;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    display: inline-block;
-    margin: 10px 0;
-}
-
-.btn-voltar:hover {
-    background: #5a67d8 !important;
-    color: #ffffff !important;
-}
-
-.btn-voltar:hover {
-    background: #5a67d8 !important;
-    color: #ffffff !important;
-    text-decoration: none;
-}
-
-        .btn-voltar:hover {
-            background: #555;
+        .form-comentario button:hover {
+            background: #5a67d8 !important;
+            color: #ffffff !important;
         }
 
         .alert {
@@ -322,6 +304,71 @@ button:hover {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+        }
+
+        /* ============================================ */
+        /* RESPONSIVIDADE */
+        /* ============================================ */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .imagem-destaque-wrapper {
+                max-height: 350px;
+                min-height: 150px;
+            }
+
+            .imagem-destaque {
+                max-height: 350px;
+            }
+
+            .imagem-fallback {
+                min-height: 200px;
+                max-height: 350px;
+                font-size: 48px;
+            }
+
+            .btn-voltar {
+                padding: 10px 20px;
+                font-size: 14px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            .imagem-destaque-wrapper {
+                max-height: 250px;
+                min-height: 120px;
+            }
+
+            .imagem-destaque {
+                max-height: 250px;
+            }
+
+            .imagem-fallback {
+                min-height: 150px;
+                max-height: 250px;
+                font-size: 36px;
+            }
+
+            .btn-voltar {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -355,9 +402,7 @@ button:hover {
             👁️ {{ noticia.visualizacoes }} visualizações
         </div>
 
-        <!-- ============================================ -->
-        <!-- IMAGEM - MOSTRA INTEIRA -->
-        <!-- ============================================ -->
+        <!-- IMAGEM -->
         {% if noticia.imagem %}
         <div class="imagem-destaque-wrapper">
             <img src="{{ noticia.imagem }}" alt="{{ noticia.titulo }}" class="imagem-destaque" loading="lazy">
@@ -370,9 +415,7 @@ button:hover {
         </div>
         {% endif %}
 
-        <!-- ============================================ -->
-        <!-- VÍDEO DO YOUTUBE -->
-        <!-- ============================================ -->
+        <!-- VÍDEO -->
         {% if noticia.video_url %}
         <div class="video-container">
             <iframe
@@ -384,11 +427,14 @@ button:hover {
         </div>
         {% endif %}
 
-        <div class="conteudo">
+        <!-- ============================================ -->
+        <!-- CONTEÚDO DA NOTÍCIA - ISOLADO -->
+        <!-- ============================================ -->
+        <div class="conteudo-wrapper">
             {{ noticia.conteudo|safe }}
         </div>
 
-        <!-- Seção de Likes -->
+        <!-- Likes -->
         <div class="like-section">
             <button class="like-btn" id="likeBtn" data-noticia-id="{{ noticia.id }}">
                 {% if ja_curtiu %}❤️{% else %}🤍{% endif %}
@@ -398,7 +444,7 @@ button:hover {
             </div>
         </div>
 
-        <!-- Seção de Comentários -->
+        <!-- Comentários -->
         <div class="comentarios">
             <h2>💬 Comentários ({{ comentarios|length }})</h2>
 
@@ -436,33 +482,32 @@ button:hover {
             </div>
         </div>
 
-        <a href="/" class="btn-voltar">← Voltar para o início</a>
+        <!-- ============================================ -->
+        <!-- BOTÃO VOLTAR - ISOLADO E FORA DO CONTEÚDO -->
+        <!-- ============================================ -->
+        <div class="btn-voltar-wrapper">
+            <a href="/" class="btn-voltar">← Voltar para o início</a>
+        </div>
     </div>
 
     <script>
-        // Sistema de Likes via AJAX
         const likeBtn = document.getElementById('likeBtn');
         if (likeBtn) {
             likeBtn.addEventListener('click', async function() {
                 const noticiaId = this.dataset.noticiaId;
-
                 const response = await fetch(`/like/${noticiaId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
-
                 const result = await response.json();
-
                 if (result.liked) {
                     likeBtn.innerHTML = '❤️';
                 } else {
                     likeBtn.innerHTML = '🤍';
                 }
-
                 document.getElementById('likeCount').innerText = result.total;
             });
         }
     </script>
 </body>
 </html>
-
