@@ -20,5 +20,4 @@ COPY . .
 ENV PORT=8080
 EXPOSE $PORT
 
-# Comando: usa Gunicorn (servidor de produção)
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:$PORT"]
