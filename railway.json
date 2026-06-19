@@ -1,7 +1,6 @@
 {
   "build": {
-    "builder": "NIXPACKS",
-    "buildCommand": "pip install -r requirements.txt psycopg2-binary"
+    "builder": "NIXPACKS"
   },
   "deploy": {
     "startCommand": "gunicorn app:app",
