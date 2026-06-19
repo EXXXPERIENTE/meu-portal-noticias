@@ -16,9 +16,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia o código
 COPY . .
 
-# Porta do Railway
-ENV PORT=8888
+# Usa a porta que o Railway fornecer
+ENV PORT=8080
 EXPOSE $PORT
 
-# Comando: usa Python diretamente (NÃO gunicorn)
-CMD ["python", "app.py"]
+# Comando: usa Gunicorn (recomendado para produção)
+CMD ["gunicorn", "app:app"]
