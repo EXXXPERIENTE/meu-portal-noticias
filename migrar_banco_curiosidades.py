@@ -1,142 +1,55 @@
-# migrar_banco_curiosidades.py
+# migrar_dados.py
 import sqlite3
+import json
 import os
+from datetime import datetime
 
 
-def migrar_banco():
-    """Adiciona suporte para categoria 'curiosidades' sem perder dados"""
+def exportar_sqlite_para_json():
+    """Exporta todos os dados do SQLite para um arquivo JSON"""
 
-    # Conectar ao banco existente
+    print("📦 Exportando dados do SQLite...")
+
+    # Verifica se o arquivo existe
+    if not os.path.exists('noticias.db'):
+        print("❌ Arquivo noticias.db não encontrado!")
+        return False
+
+    # Conecta ao SQLite
     conn = sqlite3.connect('noticias.db')
+    conn.row_factory = sqlite3.Row  # Para acessar colunas por nome
     cursor = conn.cursor()
 
-    print("🔍 Verificando estrutura do banco de dados...")
+    # Pega todas as tabelas
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tabelas = cursor.fetchall()
 
-    # Verificar se a coluna 'categoria' aceita a nova categoria
-    cursor.execute("PRAGMA table_info(noticia)")
-    colunas = cursor.fetchall()
+    dados = {}
 
-    # Verificar as categorias existentes
-    cursor.execute("SELECT DISTINCT categoria FROM noticia")
-    categorias_existentes = [row[0] for row in cursor.fetchall()]
-    print(f"📋 Categorias atuais: {categorias_existentes}")
+    for tabela in tabelas:
+        nome_tabela = tabela[0]
+        print(f"  📋 Exportando tabela: {nome_tabela}")
 
-    # A coluna categoria já existe? (deve existir)
-    coluna_categoria = [c for c in colunas if c[1] == 'categoria']
-    if coluna_categoria:
-        print("✅ Coluna 'categoria' já existe")
+        # Pega todos os dados da tabela
+        cursor.execute(f"SELECT * FROM {nome_tabela}")
+        rows = cursor.fetchall()
 
-        # Verificar o tipo da coluna (deve ser TEXT)
-        tipo_atual = coluna_categoria[0][2]
-        print(f"📝 Tipo atual da coluna categoria: {tipo_atual}")
-
-        # Verificar se a categoria 'curiosidades' já está sendo usada
-        if 'curiosidades' in categorias_existentes:
-            print("✅ Categoria 'curiosidades' já existe no banco!")
-        else:
-            print("📌 Categoria 'curiosidades' não encontrada. O banco está pronto para aceitá-la!")
-            print("   Você pode criar novas postagens com a categoria 'curiosidades'")
-
-    # Verificar outras colunas importantes
-    colunas_nomes = [c[1] for c in colunas]
-
-    # Adicionar coluna 'imagem' se não existir
-    if 'imagem' not in colunas_nomes:
-        print("📸 Adicionando coluna 'imagem'...")
-        cursor.execute("ALTER TABLE noticia ADD COLUMN imagem TEXT")
-        print("✅ Coluna 'imagem' adicionada")
-
-    # Adicionar coluna 'visualizacoes' se não existir
-    if 'visualizacoes' not in colunas_nomes:
-        print("👁️ Adicionando coluna 'visualizacoes'...")
-        cursor.execute("ALTER TABLE noticia ADD COLUMN visualizacoes INTEGER DEFAULT 0")
-        print("✅ Coluna 'visualizacoes' adicionada")
-
-    # Verificar se a tabela 'comentario' existe
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='comentario'")
-    if not cursor.fetchone():
-        print("💬 Criando tabela 'comentario'...")
-        cursor.execute("""
-            CREATE TABLE comentario (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                noticia_id INTEGER NOT NULL,
-                nome TEXT NOT NULL,
-                email TEXT,
-                conteudo TEXT NOT NULL,
-                data TIMESTAMP,
-                aprovado BOOLEAN DEFAULT 0,
-                FOREIGN KEY (noticia_id) REFERENCES noticia (id)
-            )
-        """)
-        print("✅ Tabela 'comentario' criada")
-
-    # Verificar se a tabela 'like' existe
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='like'")
-    if not cursor.fetchone():
-        print("❤️ Criando tabela 'like'...")
-        cursor.execute("""
-            CREATE TABLE "like" (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                noticia_id INTEGER NOT NULL,
-                ip_usuario TEXT NOT NULL,
-                data TIMESTAMP,
-                FOREIGN KEY (noticia_id) REFERENCES noticia (id)
-            )
-        """)
-        print("✅ Tabela 'like' criada")
-
-    # Verificar se a tabela 'inscrito' existe
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='inscrito'")
-    if not cursor.fetchone():
-        print("📧 Criando tabela 'inscrito'...")
-        cursor.execute("""
-            CREATE TABLE inscrito (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT UNIQUE NOT NULL,
-                data_inscricao TIMESTAMP,
-                ativo BOOLEAN DEFAULT 1
-            )
-        """)
-        print("✅ Tabela 'inscrito' criada")
-
-    # Verificar se a tabela 'admin' existe
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='admin'")
-    if not cursor.fetchone():
-        print("🔐 Criando tabela 'admin'...")
-        cursor.execute("""
-            CREATE TABLE admin (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL
-            )
-        """)
-        print("✅ Tabela 'admin' criada")
-
-        # Inserir admin padrão
-        from werkzeug.security import generate_password_hash
-        cursor.execute("INSERT INTO admin (username, password_hash) VALUES (?, ?)",
-                       ('admin', generate_password_hash('admin123')))
-        print("✅ Usuário admin criado (admin/admin123)")
-
-    # Salvar alterações
-    conn.commit()
-
-    # Mostrar estatísticas
-    cursor.execute("SELECT COUNT(*) FROM noticia")
-    total_noticias = cursor.fetchone()[0]
-    print(f"\n📊 Estatísticas do banco:")
-    print(f"   - Total de notícias: {total_noticias}")
-
-    cursor.execute("SELECT categoria, COUNT(*) FROM noticia GROUP BY categoria")
-    for categoria, count in cursor.fetchall():
-        print(f"   - {categoria}: {count} notícia(s)")
+        # Converte para lista de dicionários
+        dados[nome_tabela] = [dict(row) for row in rows]
+        print(f"     ✅ {len(dados[nome_tabela])} registros")
 
     conn.close()
 
-    print("\n🎉 Migração concluída com sucesso!")
-    print("✅ Nenhum dado foi perdido!")
-    print("🚀 Agora você pode usar a nova categoria 'curiosidades'")
+    # Salva em JSON
+    nome_arquivo = f'backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+    with open(nome_arquivo, 'w', encoding='utf-8') as f:
+        json.dump(dados, f, ensure_ascii=False, indent=2, default=str)
+
+    print(f"\n✅ Dados exportados com sucesso para: {nome_arquivo}")
+    print(f"📊 Total de tabelas: {len(dados)}")
+
+    return nome_arquivo
 
 
 if __name__ == "__main__":
-    migrar_banco()
+    exportar_sqlite_para_json()

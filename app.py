@@ -19,8 +19,25 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Configuração do banco
+# Configuração do banco
+import os
+from dotenv import load_dotenv
+
+# Carrega variáveis do .env
+load_dotenv()
+
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "noticias.db")}'
+
+# Tenta pegar DATABASE_URL da variável de ambiente
+# Se não existir, usa SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    os.environ.get('DATABASE_URL') or
+    f'sqlite:///{os.path.join(basedir, "noticias.db")}'
+)
+
+# Mostra qual banco está usando (útil para debug)
+print(f"🔍 Banco conectado: {app.config['SQLALCHEMY_DATABASE_URI'][:50]}...")
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
