@@ -338,16 +338,48 @@ def editar_postagem(id):
 def excluir_postagem(id):
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+
     noticia = Noticia.query.get_or_404(id)
+
+    # =============================================
+    # 1. PRIMEIRO: Remover todos os comentários associados
+    # =============================================
+    comentarios = Comentario.query.filter_by(noticia_id=id).all()
+    for comentario in comentarios:
+        db.session.delete(comentario)
+
+    # =============================================
+    # 2. SEGUNDO: Remover todos os likes associados
+    # =============================================
+    likes = Like.query.filter_by(noticia_id=id).all()
+    for like in likes:
+        db.session.delete(like)
+
+    # =============================================
+    # 3. TERCEIRO: Remover a imagem (se existir)
+    # =============================================
     if noticia.imagem:
-        imagem_path = os.path.join(basedir, noticia.imagem.lstrip('/'))
-        if os.path.exists(imagem_path):
-            os.remove(imagem_path)
+        try:
+            # Extrai o nome do arquivo do caminho
+            nome_arquivo = os.path.basename(noticia.imagem)
+            # Constrói o caminho correto
+            imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+
+            if os.path.exists(imagem_path) and os.path.isfile(imagem_path):
+                os.remove(imagem_path)
+                print(f"✅ Imagem removida: {imagem_path}")
+        except Exception as e:
+            # Se der erro ao remover a imagem, só registra e continua
+            print(f"⚠️ Erro ao remover imagem: {e}")
+
+    # =============================================
+    # 4. QUARTO: Remover a notícia
+    # =============================================
     db.session.delete(noticia)
     db.session.commit()
-    flash('Notícia excluída!', 'success')
-    return redirect(url_for('admin_panel'))
 
+    flash('Notícia e todos os dados associados foram excluídos com sucesso!', 'success')
+    return redirect(url_for('admin_panel'))
 
 @app.route('/admin/comentarios')
 def admin_comentarios():
