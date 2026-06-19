@@ -6,10 +6,8 @@ from datetime import datetime
 import os
 import re
 
-database_url = os.environ.get('DATABASE_URL')
-
 app = Flask(__name__)
-app.secret_key = 'sua_chave_secreta_aqui_mude_para_algo_seguro'
+app.secret_key = os.environ.get('SECRET_KEY', 'sua_chave_secreta_aqui_mude_para_algo_seguro')
 
 # Configuração para upload de imagens
 UPLOAD_FOLDER = 'static/uploads'
@@ -20,29 +18,25 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 # Criar pasta para uploads
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Configuração do banco
-# Configuração do banco
-import os
-from dotenv import load_dotenv
-
-# Carrega variáveis do .env
-load_dotenv()
-
+# ============================================
+# CONFIGURAÇÃO DO BANCO DE DADOS
+# ============================================
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Tenta pegar DATABASE_URL da variável de ambiente
-# Se não existir, usa SQLite
+# Tenta pegar DATABASE_URL da variável de ambiente (Railway)
+# Se não existir, usa SQLite (local)
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL') or
-    f'sqlite:///{os.path.join(basedir, "noticias.db")}'
+        os.environ.get('DATABASE_URL') or
+        f'sqlite:///{os.path.join(basedir, "noticias.db")}'
 )
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Mostra qual banco está usando (útil para debug)
 print(f"🔍 Banco conectado: {app.config['SQLALCHEMY_DATABASE_URI'][:50]}...")
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
+
 
 # ============================================
 # ROTA PARA SERVIR ARQUIVOS ESTÁTICOS
@@ -51,12 +45,15 @@ db = SQLAlchemy(app)
 def serve_static(filename):
     return send_from_directory('static', filename)
 
-# Modelos
+
+# ============================================
+# MODELOS
+# ============================================
 class Noticia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200), nullable=False)
     conteudo = db.Column(db.Text, nullable=False)
-    categoria = db.Column(db.String(50), nullable=False)  # 'tecnologia', 'saude', 'curiosidades'
+    categoria = db.Column(db.String(50), nullable=False)
     imagem = db.Column(db.String(200), nullable=True)
     video_url = db.Column(db.String(200), nullable=True)
     visualizacoes = db.Column(db.Integer, default=0)
@@ -94,38 +91,58 @@ class Admin(db.Model):
     password_hash = db.Column(db.String(200), nullable=False)
 
 
-# Função para verificar migração do banco
+# ============================================
+# FUNÇÃO PARA MIGRAÇÃO DO BANCO (SQLite)
+# ============================================
 def verificar_migrar_banco():
-    import sqlite3
-    conn = sqlite3.connect('noticias.db')
-    cursor = conn.cursor()
+    try:
+        import sqlite3
+        conn = sqlite3.connect('noticias.db')
+        cursor = conn.cursor()
 
-    cursor.execute("PRAGMA table_info(noticia)")
-    colunas = [coluna[1] for coluna in cursor.fetchall()]
+        cursor.execute("PRAGMA table_info(noticia)")
+        colunas = [coluna[1] for coluna in cursor.fetchall()]
 
-    if 'imagem' not in colunas:
-        cursor.execute("ALTER TABLE noticia ADD COLUMN imagem TEXT")
-    if 'visualizacoes' not in colunas:
-        cursor.execute("ALTER TABLE noticia ADD COLUMN visualizacoes INTEGER DEFAULT 0")
-    if 'video_url' not in colunas:
-        cursor.execute("ALTER TABLE noticia ADD COLUMN video_url TEXT")
+        if 'imagem' not in colunas:
+            cursor.execute("ALTER TABLE noticia ADD COLUMN imagem TEXT")
+        if 'visualizacoes' not in colunas:
+            cursor.execute("ALTER TABLE noticia ADD COLUMN visualizacoes INTEGER DEFAULT 0")
+        if 'video_url' not in colunas:
+            cursor.execute("ALTER TABLE noticia ADD COLUMN video_url TEXT")
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
+        print("✅ Migração do SQLite verificada")
+    except Exception as e:
+        print(f"⚠️ Migração não necessária ou erro: {e}")
 
 
-# Criar banco
+# ============================================
+# CRIAR BANCO E ADMIN
+# ============================================
 with app.app_context():
-    db.create_all()
-    verificar_migrar_banco()
+    try:
+        db.create_all()
+        print("✅ Tabelas criadas/verificadas")
 
-    if not Admin.query.filter_by(username='admin').first():
-        admin = Admin(username='admin', password_hash=generate_password_hash('admin123'))
-        db.session.add(admin)
-        db.session.commit()
-        print("Usuário admin: admin / senha: admin123")
+        # Verifica se é SQLite para migrar
+        if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
+            verificar_migrar_banco()
+
+        # Criar admin se não existir
+        if not Admin.query.filter_by(username='admin').first():
+            admin = Admin(username='admin', password_hash=generate_password_hash('admin123'))
+            db.session.add(admin)
+            db.session.commit()
+            print("✅ Usuário admin criado: admin / senha: admin123")
+
+    except Exception as e:
+        print(f"❌ Erro ao criar tabelas: {str(e)}")
 
 
+# ============================================
+# FUNÇÕES AUXILIARES
+# ============================================
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -146,11 +163,16 @@ def utility_processor():
     return dict(converter_link_youtube=converter_link_youtube)
 
 
+# ============================================
+# ROTAS PRINCIPAIS
+# ============================================
 @app.route('/')
 def index():
-    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(10).all()
+    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(
+        10).all()
     saude_noticias = Noticia.query.filter_by(categoria='saude').order_by(Noticia.data_publicacao.desc()).limit(10).all()
-    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(Noticia.data_publicacao.desc()).limit(10).all()
+    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(
+        Noticia.data_publicacao.desc()).limit(10).all()
 
     return render_template('index.html',
                            tech_noticias=tech_noticias,
@@ -242,9 +264,11 @@ def inscrever_newsletter():
 
 @app.route('/api/noticias')
 def api_noticias():
-    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(10).all()
+    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(
+        10).all()
     saude_noticias = Noticia.query.filter_by(categoria='saude').order_by(Noticia.data_publicacao.desc()).limit(10).all()
-    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(Noticia.data_publicacao.desc()).limit(10).all()
+    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(
+        Noticia.data_publicacao.desc()).limit(10).all()
 
     def formatar_noticia(n):
         return {
@@ -263,7 +287,9 @@ def api_noticias():
     }
 
 
-# Rotas Admin
+# ============================================
+# ROTAS ADMIN
+# ============================================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -360,45 +386,32 @@ def excluir_postagem(id):
 
     noticia = Noticia.query.get_or_404(id)
 
-    # =============================================
-    # 1. PRIMEIRO: Remover todos os comentários associados
-    # =============================================
+    # Remover comentários
     comentarios = Comentario.query.filter_by(noticia_id=id).all()
     for comentario in comentarios:
         db.session.delete(comentario)
 
-    # =============================================
-    # 2. SEGUNDO: Remover todos os likes associados
-    # =============================================
+    # Remover likes
     likes = Like.query.filter_by(noticia_id=id).all()
     for like in likes:
         db.session.delete(like)
 
-    # =============================================
-    # 3. TERCEIRO: Remover a imagem (se existir)
-    # =============================================
+    # Remover imagem
     if noticia.imagem:
         try:
-            # Extrai o nome do arquivo do caminho
             nome_arquivo = os.path.basename(noticia.imagem)
-            # Constrói o caminho correto
             imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-
             if os.path.exists(imagem_path) and os.path.isfile(imagem_path):
                 os.remove(imagem_path)
-                print(f"✅ Imagem removida: {imagem_path}")
         except Exception as e:
-            # Se der erro ao remover a imagem, só registra e continua
             print(f"⚠️ Erro ao remover imagem: {e}")
 
-    # =============================================
-    # 4. QUARTO: Remover a notícia
-    # =============================================
     db.session.delete(noticia)
     db.session.commit()
 
     flash('Notícia e todos os dados associados foram excluídos com sucesso!', 'success')
     return redirect(url_for('admin_panel'))
+
 
 @app.route('/admin/comentarios')
 def admin_comentarios():
@@ -449,14 +462,13 @@ def enviar_newsletter():
         flash('Preencha assunto e mensagem!', 'danger')
         return redirect(url_for('admin_newsletter'))
     inscritos = Inscrito.query.filter_by(ativo=True).all()
-    flash(f'Newsletter seria enviada para {len(inscritos)} inscritos. Integre com SendGrid/Mailgun!', 'info')
+    flash(f'Newsletter seria enviada para {len(inscritos)} inscritos.', 'info')
     return redirect(url_for('admin_newsletter'))
 
 
-# ==============================================
-# SISTEMA DE LOGIN SEGURO COM TROCA DE SENHA
-# ==============================================
-
+# ============================================
+# SISTEMA DE LOGIN SEGURO
+# ============================================
 @app.route('/admin/alterar-senha', methods=['GET', 'POST'])
 def alterar_senha():
     if not session.get('logged_in'):
@@ -516,6 +528,9 @@ def admin_perfil():
     return render_template('admin_perfil.html', admin=admin)
 
 
+# ============================================
+# INICIAR APLICAÇÃO
+# ============================================
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 8888))
     app.run(debug=False, host='0.0.0.0', port=port)
