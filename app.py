@@ -19,21 +19,24 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ============================================
-# CONFIGURAÇÃO DO BANCO DE DADOS
+# CONFIGURAÇÃO DO BANCO DE DADOS - SEM DOTENV!
 # ============================================
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Tenta pegar DATABASE_URL da variável de ambiente (Railway)
 # Se não existir, usa SQLite (local)
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-        os.environ.get('DATABASE_URL') or
-        f'sqlite:///{os.path.join(basedir, "noticias.db")}'
-)
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url:
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    print("✅ Conectado ao PostgreSQL (Railway)")
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "noticias.db")}'
+    print("📁 Conectado ao SQLite (Local)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Mostra qual banco está usando (útil para debug)
-print(f"🔍 Banco conectado: {app.config['SQLALCHEMY_DATABASE_URI'][:50]}...")
+print(f"🔍 Banco: {app.config['SQLALCHEMY_DATABASE_URI'][:50]}...")
 
 db = SQLAlchemy(app)
 
