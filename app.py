@@ -6,6 +6,8 @@ from datetime import datetime
 import os
 import re
 
+database_url = os.environ.get('DATABASE_URL')
+
 app = Flask(__name__)
 app.secret_key = 'sua_chave_secreta_aqui_mude_para_algo_seguro'
 
