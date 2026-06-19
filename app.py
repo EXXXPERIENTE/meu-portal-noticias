@@ -8,18 +8,9 @@ import re
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'sua_chave_secreta_aqui_mude_para_algo_seguro')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "noticias.db")}'
-# Configuração para upload de imagens
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
-# Criar pasta para uploads
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ============================================
-# CONFIGURAÇÃO DO BANCO DE DADOS - SEM DOTENV!
+# CONFIGURAÇÃO DO BANCO DE DADOS
 # ============================================
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,6 +31,16 @@ print(f"🔍 Banco: {app.config['SQLALCHEMY_DATABASE_URI'][:50]}...")
 
 db = SQLAlchemy(app)
 
+# ============================================
+# CONFIGURAÇÃO PARA UPLOAD
+# ============================================
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+# Criar pasta para uploads
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ============================================
 # ROTA PARA SERVIR ARQUIVOS ESTÁTICOS
@@ -47,7 +48,6 @@ db = SQLAlchemy(app)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
-
 
 # ============================================
 # MODELOS
@@ -171,11 +171,9 @@ def utility_processor():
 # ============================================
 @app.route('/')
 def index():
-    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(
-        10).all()
+    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(10).all()
     saude_noticias = Noticia.query.filter_by(categoria='saude').order_by(Noticia.data_publicacao.desc()).limit(10).all()
-    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(
-        Noticia.data_publicacao.desc()).limit(10).all()
+    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(Noticia.data_publicacao.desc()).limit(10).all()
 
     return render_template('index.html',
                            tech_noticias=tech_noticias,
@@ -267,11 +265,9 @@ def inscrever_newsletter():
 
 @app.route('/api/noticias')
 def api_noticias():
-    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(
-        10).all()
+    tech_noticias = Noticia.query.filter_by(categoria='tecnologia').order_by(Noticia.data_publicacao.desc()).limit(10).all()
     saude_noticias = Noticia.query.filter_by(categoria='saude').order_by(Noticia.data_publicacao.desc()).limit(10).all()
-    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(
-        Noticia.data_publicacao.desc()).limit(10).all()
+    curiosidades_noticias = Noticia.query.filter_by(categoria='curiosidades').order_by(Noticia.data_publicacao.desc()).limit(10).all()
 
     def formatar_noticia(n):
         return {
